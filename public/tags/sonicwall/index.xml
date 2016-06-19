@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Sonicwall on naut&#39;s blog</title>
+    <link>http://hugo.nazaretyan.com/tags/sonicwall/</link>
+    <description>Recent content in Sonicwall on naut&#39;s blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <managingEditor>moushegh@gmail.com (Moushegh Nazaretyan)</managingEditor>
+    <webMaster>moushegh@gmail.com (Moushegh Nazaretyan)</webMaster>
+    <lastBuildDate>Fri, 26 Feb 2010 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://hugo.nazaretyan.com/tags/sonicwall/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>GVC uninstall</title>
+      <link>http://hugo.nazaretyan.com/post/gvc-uninstall/</link>
+      <pubDate>Fri, 26 Feb 2010 00:00:00 +0000</pubDate>
+      <author>moushegh@gmail.com (Moushegh Nazaretyan)</author>
+      <guid>http://hugo.nazaretyan.com/post/gvc-uninstall/</guid>
+      <description>&lt;p&gt;sometimes when youre trying to uninstall sonicwall global VPN client youre getting error that is not installed on the machine, but after that when youre trying to install the new one its gives error that old version is intalled,&lt;/p&gt;
+
+&lt;p&gt;here is easy way to remove it.&lt;/p&gt;
+
+&lt;p&gt;&lt;span style=&#34;color: #ffffff;&#34;&gt;In a DOS command window type the following: &lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;span style=&#34;color: black;&#34;&gt;&lt;span style=&#34;color: #ffffff;&#34;&gt;C:&amp;gt; &lt;/span&gt;&lt;strong&gt;&lt;span style=&#34;color: #ffffff;&#34;&gt;net stop rcfox&lt;/span&gt;&lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;span style=&#34;color: black;&#34;&gt;&lt;span style=&#34;color: #ffffff;&#34;&gt;Then go into the Windows\System32\drivers directory and rename &lt;/span&gt;&lt;strong&gt;&lt;span style=&#34;color: #ffffff;&#34;&gt;rcfox.sys&lt;/span&gt;&lt;/strong&gt;&lt;span style=&#34;color: #ffffff;&#34;&gt; to &lt;/span&gt;&lt;strong&gt;&lt;span style=&#34;color: #ffffff;&#34;&gt;rcfox.sys.old&lt;/span&gt;&lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;span style=&#34;color: black;&#34;&gt;&lt;span style=&#34;color: #ffffff;&#34;&gt;Run the installer&lt;/span&gt;&lt;br /&gt; &lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;span style=&#34;color: #ffffff;&#34;&gt;hope it helps.&lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;y&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

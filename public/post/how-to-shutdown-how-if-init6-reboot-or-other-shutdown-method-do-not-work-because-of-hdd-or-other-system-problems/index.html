@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article# website: http://ogp.me/ns/website#">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+    <meta name="description" content="">
+    <meta property="og:title" content="How to shutdown how if init6, reboot or other shutdown method do not work because of hdd, or other system problems">
+    
+    <meta property="og:type" content="article">
+    <meta property="article:published_time" content="2010-04-09">
+    
+    <meta property="og:description" content="">
+    <meta property="og:url" content="http://hugo.nazaretyan.com/post/how-to-shutdown-how-if-init6-reboot-or-other-shutdown-method-do-not-work-because-of-hdd-or-other-system-problems/">
+    <meta property="og:site_name" content="naut&#39;s blog">
+    
+    <meta property="og:tags" content="debain">
+    
+    <meta property="og:tags" content="IT support">
+    
+    <meta property="og:tags" content="Linux">
+    
+    <meta property="og:tags" content="reset">
+    
+    <meta property="og:tags" content="restart">
+    
+    <meta name="generator" content="Hugo 0.16" />
+    <title>How to shutdown how if init6, reboot or other shutdown method do not work because of hdd, or other system problems &middot; naut&#39;s blog</title>
+    
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
+    
+    <link rel="stylesheet" href="http://hugo.nazaretyan.com/css/style.css">
+    <link href="" rel="alternate" type="application/rss+xml" title="naut&#39;s blog" />
+
+    
+    
+</head>
+<body>
+<nav class="navbar navbar-default navbar-fixed-top visible-xs">
+	<div class="container-fluid">
+		<div class="navbar-header">
+			<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+				<span class="sr-only">Toggle navigation</span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</button>
+			
+				<a class="navbar-brand" href="http://hugo.nazaretyan.com/">Moushegh Nazaretyan</a>
+			
+		</div>
+		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+			<ul class="nav navbar-nav">
+				
+				
+					<li><a href="http://hugo.nazaretyan.com/about/">About</a></li>
+				
+					<li><a href="http://hugo.nazaretyan.com/post/">Blog</a></li>
+				
+					<li><a href="http://hugo.nazaretyan.com/cv/">CV</a></li>
+				
+			</ul>
+		</div>
+	</div>
+</nav>
+<div class="container-fluid">
+	<div class="row">
+		<div id="menu" class="hidden-xs col-sm-4 col-md-3">
+	<div id="menu-content" class="vertical-align">
+		
+			<h1 class="text-center"><a href="http://hugo.nazaretyan.com/">Moushegh Nazaretyan</a></h1>
+		
+		
+		
+			<small class="text-center center-block">Linux Operations</small>
+		
+		
+		
+			<img id="profile-pic" src="http://hugo.nazaretyan.com//img/moushegh.jpg" alt="My Picture" class="img-circle center-block">
+		
+		<div id="social" class="text-center">
+			<a href="https://twitter.com/darthmaster"><i class="fa fa-twitter fa-2x"></i></a>
+			<a href="https://www.linkedin.com/in/moushegh"><i class="fa fa-linkedin fa-2x"></i></a>
+			<a href="https://github.com/moushegh"><i class="fa fa-github fa-2x"></i></a>
+			<a href="mailto:moushegh@nazaretyan.com"><i class="fa fa-envelope-o fa-2x"></i></a>
+		</div>
+		<div id="links" class="text-center">
+			
+			
+				<a href="http://hugo.nazaretyan.com/about/">About</a>
+			
+				<a href="http://hugo.nazaretyan.com/post/">Blog</a>
+			
+				<a href="http://hugo.nazaretyan.com/cv/">CV</a>
+			
+		</div>
+	</div>
+</div>
+		<div id="content" class="col-xs-12 col-sm-8 col-md-9">
+			<div class="row">
+				<div id="post" class="col-sm-offset-1 col-sm-10 col-md-10 col-lg-8">
+
+<main>
+	<header>
+		<h1>How to shutdown how if init6, reboot or other shutdown method do not work because of hdd, or other system problems</h1>
+	</header>
+
+	<article>
+		<p>If you have ever had a hard drive fail on a remote server you may remember the feeling you had after trying to issue the following commands:</p>
+
+<p># reboot</p>
+
+<p>bash: /sbin/reboot: Input/output error</p>
+
+<p># shutdown -r now</p>
+
+<p>bash: /sbin/shutdown: Input/output error</p>
+
+<p>Obviously, there is a problem with your drive. These commands are failing because the kernel is unable to load the /sbin/reboot and /sbin/shutdown binaries from the disk so that it can execute them.</p>
+
+<p>A fsck on the next boot might be able to correct whatever is wrong with the disk, but first you need to get the system to reboot. If your machine is located at a managed hosting provider then you could submit a reboot ticket, but you&#8217;ll have to wait for someone to take responsibility.</p>
+
+<p>Wouldn&#8217;t it be nice if there was a way to ask the kernel to reboot without needing to access the failing drive? Well, there is a way, and it is remarkably simple.</p>
+
+<p>The “magic SysRq key” provides a way to send commands directly to the kernel through the /proc filesystem. It is enabled via a kernel compile time option, CONFIG_MAGIC_SYSRQ, which seems to be standard on most distributions. First you must activate the magic SysRq option:</p>
+
+<p>echo 1 &gt; /proc/sys/kernel/sysrq</p>
+
+<p>When you are ready to reboot the machine simply run the following:</p>
+
+<p>echo b &gt; /proc/sysrq-trigger</p>
+
+<p>This does not attempt to unmount or sync filesystems, so it should only be used when absolutely necessary, but if your drive is already failing then that may not be a concern.</p>
+
+<p>In addition to rebooting the system the sysrq trick can be used to dump memory information to the console, sync all filesystems, remount all filesystems in read-only mode, send SIGTERM or SIGKILL to all processes except init, or power off the machine entirely, among other things.</p>
+
+<p>Also, instead of echoing into /proc/sys/kernel/sysrq each time you can activate the magic SysRq key at system boot time using sysctl, where supported:</p>
+
+<p>echo &#8220;kernel.sysrq = 1&#8243; &gt;&gt; /etc/sysctl.conf</p>
+
+<p>If you would like to learn more about magic SysRq you can read the sysrq.txt file in the kernel documentation.</p>
+
+	</article>
+</main>
+
+<div id="bottom-nav" class="text-center center-block">
+	<a href=" http://hugo.nazaretyan.com/" class="btn btn-default"><i class="fa fa-home"></i> Home</a>
+</div>
+
+
+  <div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'moushegh';
+    var disqus_identifier = 'http:\/\/hugo.nazaretyan.com\/post\/how-to-shutdown-how-if-init6-reboot-or-other-shutdown-method-do-not-work-because-of-hdd-or-other-system-problems\/';
+    var disqus_title = 'How to shutdown how if init6, reboot or other shutdown method do not work because of hdd, or other system problems';
+    var disqus_url = 'http:\/\/hugo.nazaretyan.com\/post\/how-to-shutdown-how-if-init6-reboot-or-other-shutdown-method-do-not-work-because-of-hdd-or-other-system-problems\/';
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+  </div>
+  
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-30504744-1', 'auto');
+    ga('send', 'pageview');
+    window.baseURL = "http:\/\/hugo.nazaretyan.com\/";
+  </script>
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.2/js/bootstrap.min.js"></script>
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/topojson/1.6.9/topojson.min.js"></script>
+  
+  
+  <script src="http://hugo.nazaretyan.com//js/App.js"></script>
+  
+</body>
+</html>

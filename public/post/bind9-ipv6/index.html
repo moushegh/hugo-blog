@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article# website: http://ogp.me/ns/website#">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+    <meta name="description" content="">
+    <meta property="og:title" content="bind9 ipv6">
+    
+    <meta property="og:type" content="article">
+    <meta property="article:published_time" content="2010-01-25">
+    
+    <meta property="og:description" content="">
+    <meta property="og:url" content="http://hugo.nazaretyan.com/post/bind9-ipv6/">
+    <meta property="og:site_name" content="naut&#39;s blog">
+    
+    <meta property="og:tags" content="bind9">
+    
+    <meta property="og:tags" content="DNS">
+    
+    <meta property="og:tags" content="ipv6">
+    
+    <meta property="og:tags" content="named.conf">
+    
+    <meta property="og:tags" content="rDNS">
+    
+    <meta property="og:tags" content="revers zone">
+    
+    <meta name="generator" content="Hugo 0.16" />
+    <title>bind9 ipv6 &middot; naut&#39;s blog</title>
+    
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
+    
+    <link rel="stylesheet" href="http://hugo.nazaretyan.com/css/style.css">
+    <link href="" rel="alternate" type="application/rss+xml" title="naut&#39;s blog" />
+
+    
+    
+</head>
+<body>
+<nav class="navbar navbar-default navbar-fixed-top visible-xs">
+	<div class="container-fluid">
+		<div class="navbar-header">
+			<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+				<span class="sr-only">Toggle navigation</span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</button>
+			
+				<a class="navbar-brand" href="http://hugo.nazaretyan.com/">Moushegh Nazaretyan</a>
+			
+		</div>
+		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+			<ul class="nav navbar-nav">
+				
+				
+					<li><a href="http://hugo.nazaretyan.com/about/">About</a></li>
+				
+					<li><a href="http://hugo.nazaretyan.com/post/">Blog</a></li>
+				
+					<li><a href="http://hugo.nazaretyan.com/cv/">CV</a></li>
+				
+			</ul>
+		</div>
+	</div>
+</nav>
+<div class="container-fluid">
+	<div class="row">
+		<div id="menu" class="hidden-xs col-sm-4 col-md-3">
+	<div id="menu-content" class="vertical-align">
+		
+			<h1 class="text-center"><a href="http://hugo.nazaretyan.com/">Moushegh Nazaretyan</a></h1>
+		
+		
+		
+			<small class="text-center center-block">Linux Operations</small>
+		
+		
+		
+			<img id="profile-pic" src="http://hugo.nazaretyan.com//img/moushegh.jpg" alt="My Picture" class="img-circle center-block">
+		
+		<div id="social" class="text-center">
+			<a href="https://twitter.com/darthmaster"><i class="fa fa-twitter fa-2x"></i></a>
+			<a href="https://www.linkedin.com/in/moushegh"><i class="fa fa-linkedin fa-2x"></i></a>
+			<a href="https://github.com/moushegh"><i class="fa fa-github fa-2x"></i></a>
+			<a href="mailto:moushegh@nazaretyan.com"><i class="fa fa-envelope-o fa-2x"></i></a>
+		</div>
+		<div id="links" class="text-center">
+			
+			
+				<a href="http://hugo.nazaretyan.com/about/">About</a>
+			
+				<a href="http://hugo.nazaretyan.com/post/">Blog</a>
+			
+				<a href="http://hugo.nazaretyan.com/cv/">CV</a>
+			
+		</div>
+	</div>
+</div>
+		<div id="content" class="col-xs-12 col-sm-8 col-md-9">
+			<div class="row">
+				<div id="post" class="col-sm-offset-1 col-sm-10 col-md-10 col-lg-8">
+
+<main>
+	<header>
+		<h1>bind9 ipv6</h1>
+	</header>
+
+	<article>
+		<p><span style="color: #ffffff;">as you can see in previous post on blog i passed IPv6 certification.</span></p>
+
+<p><span style="color: #ffffff;">Most hard part for me was configuring rDNS server <img src="http://i1.wp.com/nazaretyan.com/wp-includes/images/smilies/icon_smile.gif?w=625" alt=":)" class="wp-smiley" data-recalc-dims="1" /></span></p>
+
+<p><span style="color: #ffffff;">why ?</span></p>
+
+<p><span style="color: #ffffff;">because it was really hard to undersend the zone record file :). after 20 minuts testing and making reload of my rndc file, i finly made it work. </span></p>
+
+<p><span style="color: #ffffff;">here is rndc file for my Zone record as example. </span></p>
+
+<p><span style="color: #ffffff;">you need to to copy it to your server and change IP&#8217;s to your own &#8230;</span></p>
+
+<p><span style="color: #ffffff;">in named.conf (usual place /etc/bind/named.conf or /usr/local/chroot/etc/bind/named.conf)</span></p>
+
+<p><span style="color: #ffffff;">you need to enter </span></p>
+
+<p><span style="color: #ffffff;"><em>zone &#8220;9.0.c.0.b.0.f.1.0.7.4.0.1.0.0.2.ip6.arpa&#8221; {<br /> type master;<br /> file &#8220;/etc/bind/la2newera.com.revers&#8221;;<br /> };</em></span></p>
+
+<p><span style="color: #ffffff;">where la2newera.com.revers is the file name (can be something diff. for your zone)</span></p>
+
+<p><span style="color: #ffffff;">content of file is : </span></p>
+
+<p><span style="color: #ffffff;"><em>$TTL 3d<br /> @       IN SOA 9.0.c.0.b.0.f.1.0.7.4.0.1.0.0.2.ip6.arpa. root.la2newera.com. (<br /> 201001241       ; Serial number (YYYYMMdd)<br /> 24h             ; Refresh time<br /> 30m             ; Retry time<br /> 2d              ; Expire time<br /> 3d              ; Default TTL (bind 8 ignores this, bind 9 needs it)<br /> )</em></span></p>
+
+<p>_IN     NS     ipv6.ns.la2newera.com.</p>
+
+<p>IN     MX  1  ipv6.nosferatu.la2newera.com.</p>
+
+<p>; Subnet #1</p>
+
+<p>$ORIGIN 9.0.c.0.b.0.f.1.0.7.4.0.1.0.0.2.ip6.arpa.</p>
+
+<p>3.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0         IN      PTR     ipv6.nosferatu.la2newera.com.</p>
+
+<p>1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0         IN      PTR     ipv6.la2newera.com.</p>
+
+<p>_</p>
+
+<p><span style="color: #ffffff;"><br /> </span></p>
+
+<p><span style="color: #ffffff;">zone file is example for my zone : 2001:470:1f0b:c09::/64</span></p>
+
+<p><span style="color: #ffffff;">make it runing !! lats move to IPv6 ASAP !!!!!!</span></p>
+
+<p><span style="color: #ffffff;"><br /> </span></p>
+
+<p><span style="color: #ffffff;">Moushegh<br /> </span></p>
+
+	</article>
+</main>
+
+<div id="bottom-nav" class="text-center center-block">
+	<a href=" http://hugo.nazaretyan.com/" class="btn btn-default"><i class="fa fa-home"></i> Home</a>
+</div>
+
+
+  <div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'moushegh';
+    var disqus_identifier = 'http:\/\/hugo.nazaretyan.com\/post\/bind9-ipv6\/';
+    var disqus_title = 'bind9 ipv6';
+    var disqus_url = 'http:\/\/hugo.nazaretyan.com\/post\/bind9-ipv6\/';
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+  </div>
+  
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-30504744-1', 'auto');
+    ga('send', 'pageview');
+    window.baseURL = "http:\/\/hugo.nazaretyan.com\/";
+  </script>
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.2/js/bootstrap.min.js"></script>
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/topojson/1.6.9/topojson.min.js"></script>
+  
+  
+  <script src="http://hugo.nazaretyan.com//js/App.js"></script>
+  
+</body>
+</html>

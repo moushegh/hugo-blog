@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Iphone on naut&#39;s blog</title>
+    <link>http://hugo.nazaretyan.com/tags/iphone/</link>
+    <description>Recent content in Iphone on naut&#39;s blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <managingEditor>moushegh@gmail.com (Moushegh Nazaretyan)</managingEditor>
+    <webMaster>moushegh@gmail.com (Moushegh Nazaretyan)</webMaster>
+    <lastBuildDate>Thu, 18 Nov 2010 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://hugo.nazaretyan.com/tags/iphone/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>itunes error -50 on sync</title>
+      <link>http://hugo.nazaretyan.com/post/itunes-error-50-on-sync/</link>
+      <pubDate>Thu, 18 Nov 2010 00:00:00 +0000</pubDate>
+      <author>moushegh@gmail.com (Moushegh Nazaretyan)</author>
+      <guid>http://hugo.nazaretyan.com/post/itunes-error-50-on-sync/</guid>
+      <description>&lt;p&gt;heya  &lt;img src=&#34;http://i1.wp.com/nazaretyan.com/wp-includes/images/smilies/icon_smile.gif?w=625&#34; alt=&#34;:)&#34; class=&#34;wp-smiley&#34; data-recalc-dims=&#34;1&#34; /&gt;few days ago got the issue with SYNC my iPhone with itunes on windows7,&lt;/p&gt;
+
+&lt;p&gt;from 4 steps of sync its stops on 3 one and told me that there is error -50&lt;/p&gt;
+
+&lt;p&gt;after searching a lot on brave apple how to and speaking with customer care i understend that even they cant tell anything regarding this issue.&lt;/p&gt;
+
+&lt;p&gt;and i start testings.&lt;/p&gt;
+
+&lt;p&gt;main issue was on picture sync. after searching and reading blogs, i find out that iphone/ipad/ipod is not syncing your images but making some CACHE of them and syncing cached files only. and if there is a issue with broken cache file you will always get error on some stage of sync.&lt;/p&gt;
+
+&lt;p&gt;problem resolution was quite simple &amp;#8211;  just delete the &amp;#8220;iPod Photo Cache&amp;#8221; directory.&lt;/p&gt;
+
+&lt;p&gt;just need to remember to find it in directory of sync.&lt;/p&gt;
+
+&lt;p&gt;after connecting device again it will rebuild your image db, and sync will be fine.&lt;/p&gt;
+
+&lt;p&gt;&amp;#8212;&amp;#8211;&lt;/p&gt;
+
+&lt;p&gt;btw &amp;#8211; apple recomends to&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;reinstall iTunes.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;uninstall antivirus&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;uninstall all unnessary programs.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;10000 time restart machine&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Amazon Aws on naut&#39;s blog</title>
+    <link>http://hugo.nazaretyan.com/tags/amazon-aws/</link>
+    <description>Recent content in Amazon Aws on naut&#39;s blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <managingEditor>moushegh@gmail.com (Moushegh Nazaretyan)</managingEditor>
+    <webMaster>moushegh@gmail.com (Moushegh Nazaretyan)</webMaster>
+    <lastBuildDate>Sun, 21 Nov 2010 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://hugo.nazaretyan.com/tags/amazon-aws/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>vps as solution for VPN on public internet access points</title>
+      <link>http://hugo.nazaretyan.com/post/vps-as-solution-for-vpn-on-public-internet-access-points/</link>
+      <pubDate>Sun, 21 Nov 2010 00:00:00 +0000</pubDate>
+      <author>moushegh@gmail.com (Moushegh Nazaretyan)</author>
+      <guid>http://hugo.nazaretyan.com/post/vps-as-solution-for-vpn-on-public-internet-access-points/</guid>
+      <description>&lt;p&gt;i think most that i want to write on this post is already tolden  in head  &lt;img src=&#34;http://i1.wp.com/nazaretyan.com/wp-includes/images/smilies/icon_smile.gif?w=625&#34; alt=&#34;:)&#34; class=&#34;wp-smiley&#34; data-recalc-dims=&#34;1&#34; /&gt;but anyway&lt;/p&gt;
+
+&lt;p&gt;most people using laptops with &amp;#8220;free&amp;#8221; access points on fastfood points/ airports and other places.&lt;/p&gt;
+
+&lt;p&gt;most of this points have a limited traffic access to internet with lot of port filters.&lt;/p&gt;
+
+&lt;p&gt;but as a usual user with unsual ports  &lt;img src=&#34;http://i1.wp.com/nazaretyan.com/wp-includes/images/smilies/icon_smile.gif?w=625&#34; alt=&#34;:)&#34; class=&#34;wp-smiley&#34; data-recalc-dims=&#34;1&#34; /&gt;i want always to access everyting from everywhere with same quality as from home&lt;/p&gt;
+
+&lt;p&gt;after searching in internet for solution trying my-freedom and other servies that giving only non full speed access i become to idea that its easier to have own VPN server running somewhere in cheep or almost free  hosting.&lt;/p&gt;
+
+&lt;p&gt;what we will need&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;we will need to register account on amazon AWS, for that we need to go to &lt;a href=&#34;http://aws.amazon.com/free/ and&#34;&gt;http://aws.amazon.com/free/ and&lt;/a&gt; register there, after we will get tear of amazon vps &lt;img src=&#34;http://i1.wp.com/nazaretyan.com/wp-includes/images/smilies/icon_smile.gif?w=625&#34; alt=&#34;:)&#34; class=&#34;wp-smiley&#34; data-recalc-dims=&#34;1&#34; /&gt;&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;we need to install virtual instance, i took the &amp;#8220;US-East Micro Instance с Ubuntu 10.4&amp;#8243; with 10gb hard drive , on community AMI&amp;#8217;s you can find it with name &lt;em&gt;ami-c2a255ab.&lt;/em&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;&lt;em&gt;3.&lt;/em&gt; when server is up and running we will need putty or (in my case just a terminal as i&amp;#8217;m a mac user) for login to server.&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;we will need to have no-ip.com account as on every restart intance will get new ip address, how to configure no-ip.com for linux host you can find on this article &lt;a href=&#34;https://help.ubuntu.com/community/DynamicDNS&#34;&gt;https://help.ubuntu.com/community/DynamicDNS&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;at server we need to install OpenVPN. there is a lot of good manuals how to do it, but in sort words&lt;/p&gt;
+
+&lt;p&gt;we need to read &lt;a href=&#34;http://library.linode.com/networking/openvpn/ubuntu-10.04-lucid&#34;&gt;http://library.linode.com/networking/openvpn/ubuntu-10.04-lucid&lt;/a&gt; this very good article about OpenVPN.&lt;/p&gt;
+
+&lt;p&gt;and try to start own one , with config file&lt;/p&gt;
+
+&lt;div id=&#34;_mcePaste&#34;&gt;
+  port 443
+&lt;/div&gt;
+
+&lt;div id=&#34;_mcePaste&#34;&gt;
+  proto udp
+&lt;/div&gt;
+
+&lt;div id=&#34;_mcePaste&#34;&gt;
+  dev tap
+&lt;/div&gt;
+
+&lt;div id=&#34;_mcePaste&#34;&gt;
+  ########################
+&lt;/div&gt;
+
+&lt;div id=&#34;_mcePaste&#34;&gt;
+  ca /etc/openvpn/ca.crt
+&lt;/div&gt;
+
+&lt;div id=&#34;_mcePaste&#34;&gt;
+  cert /etc/openvpn/server.crt
+&lt;/div&gt;
+
+&lt;div id=&#34;_mcePaste&#34;&gt;
+  key /etc/openvpn/server.key
+&lt;/div&gt;
+
+&lt;div id=&#34;_mcePaste&#34;&gt;
+  dh /etc/openvpn/dh1024.pem
+&lt;/div&gt;
+
+&lt;div id=&#34;_mcePaste&#34;&gt;
+  ##################################
+&lt;/div&gt;
+
+&lt;div id=&#34;_mcePaste&#34;&gt;
+  tls-server
+&lt;/div&gt;
+
+&lt;div id=&#34;_mcePaste&#34;&gt;
+  mode server
+&lt;/div&gt;
+
+&lt;div id=&#34;_mcePaste&#34;&gt;
+  duplicate-cn
+&lt;/div&gt;
+
+&lt;div id=&#34;_mcePaste&#34;&gt;
+  tun-mtu 1500
+&lt;/div&gt;
+
+&lt;div id=&#34;_mcePaste&#34;&gt;
+  tun-mtu-extra 32
+&lt;/div&gt;
+
+&lt;div id=&#34;_mcePaste&#34;&gt;
+  mssfix 1450
+&lt;/div&gt;
+
+&lt;div id=&#34;_mcePaste&#34;&gt;
+  ##################################
+&lt;/div&gt;
+
+&lt;div id=&#34;_mcePaste&#34;&gt;
+  server 172.0.1.0 255.255.255.0
+&lt;/div&gt;
+
+&lt;div id=&#34;_mcePaste&#34;&gt;
+  ifconfig-pool-persist clients.txt
+&lt;/div&gt;
+
+&lt;div id=&#34;_mcePaste&#34;&gt;
+  push &amp;#8220;redirect-gateway&amp;#8221;
+&lt;/div&gt;
+
+&lt;div id=&#34;_mcePaste&#34;&gt;
+  push &amp;#8220;dhcp-option DNS 172.0.1.1&amp;#8243;
+&lt;/div&gt;
+
+&lt;div id=&#34;_mcePaste&#34;&gt;
+  ############################
+&lt;/div&gt;
+
+&lt;div id=&#34;_mcePaste&#34;&gt;
+  client-to-client
+&lt;/div&gt;
+
+&lt;div id=&#34;_mcePaste&#34;&gt;
+  keepalive 10 120
+&lt;/div&gt;
+
+&lt;div id=&#34;_mcePaste&#34;&gt;
+  max-clients 100
+&lt;/div&gt;
+
+&lt;div id=&#34;_mcePaste&#34;&gt;
+  ###############################
+&lt;/div&gt;
+
+&lt;div id=&#34;_mcePaste&#34;&gt;
+  user root
+&lt;/div&gt;
+
+&lt;div id=&#34;_mcePaste&#34;&gt;
+  group root
+&lt;/div&gt;
+
+&lt;div id=&#34;_mcePaste&#34;&gt;
+  ##################################
+&lt;/div&gt;
+
+&lt;div id=&#34;_mcePaste&#34;&gt;
+  persist-key
+&lt;/div&gt;
+
+&lt;div id=&#34;_mcePaste&#34;&gt;
+  persist-tun
+&lt;/div&gt;
+
+&lt;div id=&#34;_mcePaste&#34;&gt;
+  status          /var/log/openvpn/status_server.log
+&lt;/div&gt;
+
+&lt;div id=&#34;_mcePaste&#34;&gt;
+  log             /var/log/openvpn/openvpn_server.log
+&lt;/div&gt;
+
+&lt;div id=&#34;_mcePaste&#34;&gt;
+  log-append      /var/log/openvpn/append_server.log
+&lt;/div&gt;
+
+&lt;div id=&#34;_mcePaste&#34;&gt;
+  verb 3
+&lt;/div&gt;
+
+&lt;p&gt;after the server is running, we need just to download windows/mac client and configure it on your laptop.&lt;/p&gt;
+
+&lt;p&gt;as you can see from config file my openvpn server is running on 443 (HTTPS) port, which is open almost everywhere,&lt;/p&gt;
+
+&lt;p&gt;if for some meters HTTPS is closed in point from where you want to connect you can try to use 53UDP (bind) port&lt;/p&gt;
+
+&lt;p&gt;from my own experience its open almost everywhere &lt;img src=&#34;http://i1.wp.com/nazaretyan.com/wp-includes/images/smilies/icon_smile.gif?w=625&#34; alt=&#34;:)&#34; class=&#34;wp-smiley&#34; data-recalc-dims=&#34;1&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;ask questions/configure and enjoy your 15GB of free traffic from Amazon AWS. &lt;img src=&#34;http://i1.wp.com/nazaretyan.com/wp-includes/images/smilies/icon_smile.gif?w=625&#34; alt=&#34;:)&#34; class=&#34;wp-smiley&#34; data-recalc-dims=&#34;1&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;y&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

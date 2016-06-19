@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Restart on naut&#39;s blog</title>
+    <link>http://hugo.nazaretyan.com/tags/restart/</link>
+    <description>Recent content in Restart on naut&#39;s blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <managingEditor>moushegh@gmail.com (Moushegh Nazaretyan)</managingEditor>
+    <webMaster>moushegh@gmail.com (Moushegh Nazaretyan)</webMaster>
+    <lastBuildDate>Fri, 09 Apr 2010 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://hugo.nazaretyan.com/tags/restart/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>How to shutdown how if init6, reboot or other shutdown method do not work because of hdd, or other system problems</title>
+      <link>http://hugo.nazaretyan.com/post/how-to-shutdown-how-if-init6-reboot-or-other-shutdown-method-do-not-work-because-of-hdd-or-other-system-problems/</link>
+      <pubDate>Fri, 09 Apr 2010 00:00:00 +0000</pubDate>
+      <author>moushegh@gmail.com (Moushegh Nazaretyan)</author>
+      <guid>http://hugo.nazaretyan.com/post/how-to-shutdown-how-if-init6-reboot-or-other-shutdown-method-do-not-work-because-of-hdd-or-other-system-problems/</guid>
+      <description>&lt;p&gt;If you have ever had a hard drive fail on a remote server you may remember the feeling you had after trying to issue the following commands:&lt;/p&gt;
+
+&lt;p&gt;# reboot&lt;/p&gt;
+
+&lt;p&gt;bash: /sbin/reboot: Input/output error&lt;/p&gt;
+
+&lt;p&gt;# shutdown -r now&lt;/p&gt;
+
+&lt;p&gt;bash: /sbin/shutdown: Input/output error&lt;/p&gt;
+
+&lt;p&gt;Obviously, there is a problem with your drive. These commands are failing because the kernel is unable to load the /sbin/reboot and /sbin/shutdown binaries from the disk so that it can execute them.&lt;/p&gt;
+
+&lt;p&gt;A fsck on the next boot might be able to correct whatever is wrong with the disk, but first you need to get the system to reboot. If your machine is located at a managed hosting provider then you could submit a reboot ticket, but you&amp;#8217;ll have to wait for someone to take responsibility.&lt;/p&gt;
+
+&lt;p&gt;Wouldn&amp;#8217;t it be nice if there was a way to ask the kernel to reboot without needing to access the failing drive? Well, there is a way, and it is remarkably simple.&lt;/p&gt;
+
+&lt;p&gt;The “magic SysRq key” provides a way to send commands directly to the kernel through the /proc filesystem. It is enabled via a kernel compile time option, CONFIG_MAGIC_SYSRQ, which seems to be standard on most distributions. First you must activate the magic SysRq option:&lt;/p&gt;
+
+&lt;p&gt;echo 1 &amp;gt; /proc/sys/kernel/sysrq&lt;/p&gt;
+
+&lt;p&gt;When you are ready to reboot the machine simply run the following:&lt;/p&gt;
+
+&lt;p&gt;echo b &amp;gt; /proc/sysrq-trigger&lt;/p&gt;
+
+&lt;p&gt;This does not attempt to unmount or sync filesystems, so it should only be used when absolutely necessary, but if your drive is already failing then that may not be a concern.&lt;/p&gt;
+
+&lt;p&gt;In addition to rebooting the system the sysrq trick can be used to dump memory information to the console, sync all filesystems, remount all filesystems in read-only mode, send SIGTERM or SIGKILL to all processes except init, or power off the machine entirely, among other things.&lt;/p&gt;
+
+&lt;p&gt;Also, instead of echoing into /proc/sys/kernel/sysrq each time you can activate the magic SysRq key at system boot time using sysctl, where supported:&lt;/p&gt;
+
+&lt;p&gt;echo &amp;#8220;kernel.sysrq = 1&amp;#8243; &amp;gt;&amp;gt; /etc/sysctl.conf&lt;/p&gt;
+
+&lt;p&gt;If you would like to learn more about magic SysRq you can read the sysrq.txt file in the kernel documentation.&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

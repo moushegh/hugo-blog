@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Wifi on naut&#39;s blog</title>
+    <link>http://hugo.nazaretyan.com/tags/wifi/</link>
+    <description>Recent content in Wifi on naut&#39;s blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <managingEditor>moushegh@gmail.com (Moushegh Nazaretyan)</managingEditor>
+    <webMaster>moushegh@gmail.com (Moushegh Nazaretyan)</webMaster>
+    <lastBuildDate>Thu, 10 May 2012 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://hugo.nazaretyan.com/tags/wifi/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>speedport  and HP8500A wifi problem</title>
+      <link>http://hugo.nazaretyan.com/post/speedport-and-hp8500a-wifi-problem/</link>
+      <pubDate>Thu, 10 May 2012 00:00:00 +0000</pubDate>
+      <author>moushegh@gmail.com (Moushegh Nazaretyan)</author>
+      <guid>http://hugo.nazaretyan.com/post/speedport-and-hp8500a-wifi-problem/</guid>
+      <description>&lt;p&gt;in case of somebody will have a issues on connecting multifunction all-in-one HP officejet 8500A to Speedport W 723V typ b, all you need to do its to downgrade the firmware from your router,&lt;/p&gt;
+
+&lt;p&gt;old firmware can be downloaded from T-com site. only one that works its 1.11.000 (actual one is 1.24.000)&lt;/p&gt;
+
+&lt;p&gt;spend today 3 hours until found solution , hope somebody who will read this would spend less  &lt;img src=&#34;http://i1.wp.com/nazaretyan.com/wp-includes/images/smilies/icon_smile.gif?w=625&#34; alt=&#34;:)&#34; class=&#34;wp-smiley&#34; data-recalc-dims=&#34;1&#34; /&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

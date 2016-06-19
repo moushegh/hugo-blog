@@ -1,0 +1,49 @@
+BaseURL = "http://hugo.nazaretyan.com/"
+relativeURLs = false
+languageCode = "en-us"
+title = "naut's blog"
+disqusShortname = "moushegh"
+theme = "hugo-geo"
+paginate2 = 5
+home = "about/"
+
+[taxonomies]
+        tag = "tags"
+        tutorial = "tutorials"
+
+[params]
+        showglobe = true
+
+        # Google Analytics
+        analytics = "UA-30504744-1"
+
+        # Social buttons for sidebar
+        github = "https://github.com/moushegh"
+        twitter = "https://twitter.com/darthmaster"
+        linkedin = "https://www.linkedin.com/in/moushegh"
+        facebook = "https://www.facebook.com/nazaretyan.moushegh"
+        email = "moushegh@nazaretyan.com"
+
+        # Sidebar profile picture
+        profilepic = "img/moushegh.jpg"
+
+        # Title/subtitle for the sidebar
+        title = "Moushegh Nazaretyan"
+        subtitle = "Linux Operations"
+
+        # Nav links below the profile picture
+        [[params.navlinks]]
+        name = "About"
+        url = "about/"
+
+        [[params.navlinks]]
+        name = "Blog"
+        url = "post/"
+
+        [[params.navlinks]]
+        name = "CV"
+        url = "cv/"
+
+[author]
+        name = "Moushegh Nazaretyan"
+        email = "moushegh@gmail.com"

@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article# website: http://ogp.me/ns/website#">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+    <meta name="description" content="">
+    <meta property="og:title" content="nginx &#43; php-fpm &#43; php-apc &#43; mysql &#43; wordpress perfect way to run a blog">
+    
+    <meta property="og:type" content="article">
+    <meta property="article:published_time" content="2013-09-27">
+    
+    <meta property="og:description" content="">
+    <meta property="og:url" content="http://hugo.nazaretyan.com/post/nginx-php-fpm-php-apc-mysql-wordpress-perfect-way-to-run-a-blog/">
+    <meta property="og:site_name" content="naut&#39;s blog">
+    
+    <meta property="og:tags" content="debian">
+    
+    <meta property="og:tags" content="Linux">
+    
+    <meta property="og:tags" content="nginx">
+    
+    <meta property="og:tags" content="php-fpm">
+    
+    <meta property="og:tags" content="wp nginx">
+    
+    <meta name="generator" content="Hugo 0.16" />
+    <title>nginx &#43; php-fpm &#43; php-apc &#43; mysql &#43; wordpress perfect way to run a blog &middot; naut&#39;s blog</title>
+    
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
+    
+    <link rel="stylesheet" href="http://hugo.nazaretyan.com/css/style.css">
+    <link href="" rel="alternate" type="application/rss+xml" title="naut&#39;s blog" />
+
+    
+    
+</head>
+<body>
+<nav class="navbar navbar-default navbar-fixed-top visible-xs">
+	<div class="container-fluid">
+		<div class="navbar-header">
+			<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+				<span class="sr-only">Toggle navigation</span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</button>
+			
+				<a class="navbar-brand" href="http://hugo.nazaretyan.com/">Moushegh Nazaretyan</a>
+			
+		</div>
+		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+			<ul class="nav navbar-nav">
+				
+				
+					<li><a href="http://hugo.nazaretyan.com/about/">About</a></li>
+				
+					<li><a href="http://hugo.nazaretyan.com/post/">Blog</a></li>
+				
+					<li><a href="http://hugo.nazaretyan.com/cv/">CV</a></li>
+				
+			</ul>
+		</div>
+	</div>
+</nav>
+<div class="container-fluid">
+	<div class="row">
+		<div id="menu" class="hidden-xs col-sm-4 col-md-3">
+	<div id="menu-content" class="vertical-align">
+		
+			<h1 class="text-center"><a href="http://hugo.nazaretyan.com/">Moushegh Nazaretyan</a></h1>
+		
+		
+		
+			<small class="text-center center-block">Linux Operations</small>
+		
+		
+		
+			<img id="profile-pic" src="http://hugo.nazaretyan.com//img/moushegh.jpg" alt="My Picture" class="img-circle center-block">
+		
+		<div id="social" class="text-center">
+			<a href="https://twitter.com/darthmaster"><i class="fa fa-twitter fa-2x"></i></a>
+			<a href="https://www.linkedin.com/in/moushegh"><i class="fa fa-linkedin fa-2x"></i></a>
+			<a href="https://github.com/moushegh"><i class="fa fa-github fa-2x"></i></a>
+			<a href="mailto:moushegh@nazaretyan.com"><i class="fa fa-envelope-o fa-2x"></i></a>
+		</div>
+		<div id="links" class="text-center">
+			
+			
+				<a href="http://hugo.nazaretyan.com/about/">About</a>
+			
+				<a href="http://hugo.nazaretyan.com/post/">Blog</a>
+			
+				<a href="http://hugo.nazaretyan.com/cv/">CV</a>
+			
+		</div>
+	</div>
+</div>
+		<div id="content" class="col-xs-12 col-sm-8 col-md-9">
+			<div class="row">
+				<div id="post" class="col-sm-offset-1 col-sm-10 col-md-10 col-lg-8">
+
+<main>
+	<header>
+		<h1>nginx &#43; php-fpm &#43; php-apc &#43; mysql &#43; wordpress perfect way to run a blog</h1>
+	</header>
+
+	<article>
+		<p>i recently moved from apache2 to nginx on all my web servers. and feeling happy about that.</p>
+
+<p>i would like to share configurations since , before and after the move i did load test on my blog and difference on performance was amazing.</p>
+
+<p>lets consider that we already have a server (VM or not) with running Debian linux. and LAMP with WP on board.</p>
+
+<p>so all we need to do its to migrate from apache2 to nginx.</p>
+
+<p>so simple steps are starting of moving apache from port 80 to 81 , to have it somewhere , in case of emergency roll back.</p>
+
+<p>check your http.conf and vhosts configs and do not forget about ports.conf. move everything to 81 restart apache, check if 80 port is free by netstat -nlptu |grep 80, check that apache is on 81 by netstat -nlptu |grep 81, try to open your WP with <a href="http://domain:81">http://domain:81</a> and if everything works, we can go forward and start to configure nginx.</p>
+
+<p>so for nginx we will need to use precompiled package from nginx.org or dotdeb or to compile it ourselves. I did compilation in my case, but here we will go with package from dotdeb (more options compiled).</p>
+
+<p>edit your /etc/apt/source.list and add</p>
+
+<pre><code>deb http://www.deb-multimedia.org stable main non-free
+deb http://packages.dotdeb.org squeeze all
+deb-src http://packages.dotdeb.org squeeze all
+deb http://nginx.org/packages/debian/ squeeze nginx
+deb-src http://nginx.org/packages/debian/ squeeze nginx
+</code></pre>
+
+<p>i&#8217;m using debian 6 (did not have time to upgrade to 7 :)) ) so consider of changing squeeze to wheezy in case of you&#8217;re using debian 7, version can be found here cat /etc/debian_version</p>
+
+<p>so after just usual steps of adding key from foreign repository</p>
+
+<pre><code>apt-get update &amp;&amp; apt-get install deb-multimedia-keyring
+wget http://www.dotdeb.org/dotdeb.gpg -O- |apt-key add -
+gpg --keyserver hkp://keys.gnupg.net --recv-keys ABF5BD827BD9BF62
+gpg -a --export 7BD9BF62 | apt-key add -
+</code></pre>
+
+<p>so now dotdeb is trusted and we can do apt-get update and apt-get upgrade, i&#8217;m sure that some php/mysql and apache packages will get updated since debian 6 have old version.</p>
+
+<p>so now we are ready to install php5-fpm , memcache (to keep php sessions in it), php-apc for caching, nginx itself <img src="http://i1.wp.com/nazaretyan.com/wp-includes/images/smilies/icon_smile.gif?w=625" alt=":)" class="wp-smiley" data-recalc-dims="1" /></p>
+
+<pre><code>apt-get install php5-fpm nginx php5-apc memcached php5-memcached php5-dev 
+</code></pre>
+
+<p>so we can test our nginx installation by trying to open the <a href="http://domain/">http://domain/</a></p>
+
+<p>if nginx default page is in place so we are on the right way.</p>
+
+<p>first thing that we will need to fix its a bug in the file /etc/php5/fpm/php.ini ,</p>
+
+<p>so open it with your favorite editor and fine the line cgi.fix_pathinfo and change value to 0 .</p>
+
+<p>after this part is done, we can move on.</p>
+
+<p>now all we need is to have nginx to work with WP (so php will work via php5-fpm).</p>
+
+<pre><code>server {
+listen       80;
+server_name  domane.name wwwdomainname etc;
+root /var/www/domain/;
+
+access_log  /var/log/nginx/domain.access.log ;
+
+location ~ \.php$ {
+try_files $uri =404;
+fastcgi_pass   unix:/tmp/wwwpool.sock;
+fastcgi_cache  one;
+fastcgi_cache_min_uses 3;
+fastcgi_cache_valid 200 301 302 304 5m;
+fastcgi_cache_key &quot;$request_method|$host|$request_uri&quot;;
+fastcgi_index  index.php;
+include fastcgi_params;
+fastcgi_param       SCRIPT_FILENAME  $document_root$fastcgi_script_name;
+fastcgi_ignore_client_abort     off;
+}
+
+location / {
+root   /var/www/domain/;
+index  index.php;
+
+try_files $uri $uri/ /index.php?$args;
+}
+
+}
+</code></pre>
+
+<p>&nbsp;</p>
+
+<p>here you will need to be careful for</p>
+
+<pre><code> fastcgi_pass   unix:/tmp/wwwpool.sock 
+</code></pre>
+
+<p>since this you need to define in php5-fpm config. in /etc/php5/fpm</p>
+
+	</article>
+</main>
+
+<div id="bottom-nav" class="text-center center-block">
+	<a href=" http://hugo.nazaretyan.com/" class="btn btn-default"><i class="fa fa-home"></i> Home</a>
+</div>
+
+
+  <div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'moushegh';
+    var disqus_identifier = 'http:\/\/hugo.nazaretyan.com\/post\/nginx-php-fpm-php-apc-mysql-wordpress-perfect-way-to-run-a-blog\/';
+    var disqus_title = 'nginx \x2b php-fpm \x2b php-apc \x2b mysql \x2b wordpress perfect way to run a blog';
+    var disqus_url = 'http:\/\/hugo.nazaretyan.com\/post\/nginx-php-fpm-php-apc-mysql-wordpress-perfect-way-to-run-a-blog\/';
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+  </div>
+  
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-30504744-1', 'auto');
+    ga('send', 'pageview');
+    window.baseURL = "http:\/\/hugo.nazaretyan.com\/";
+  </script>
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.2/js/bootstrap.min.js"></script>
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/topojson/1.6.9/topojson.min.js"></script>
+  
+  
+  <script src="http://hugo.nazaretyan.com//js/App.js"></script>
+  
+</body>
+</html>

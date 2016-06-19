@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Abouts on naut&#39;s blog</title>
+    <link>http://hugo.nazaretyan.com/about/</link>
+    <description>Recent content in Abouts on naut&#39;s blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <managingEditor>moushegh@gmail.com (Moushegh Nazaretyan)</managingEditor>
+    <webMaster>moushegh@gmail.com (Moushegh Nazaretyan)</webMaster>
+    <lastBuildDate>Tue, 20 Oct 2009 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://hugo.nazaretyan.com/about/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>About me</title>
+      <link>http://hugo.nazaretyan.com/about/</link>
+      <pubDate>Tue, 20 Oct 2009 00:00:00 +0000</pubDate>
+      <author>moushegh@gmail.com (Moushegh Nazaretyan)</author>
+      <guid>http://hugo.nazaretyan.com/about/</guid>
+      <description>
+
+&lt;p&gt;Hello and welcome to my homepage. My name is Moushegh Nazaretyan. May years ago I started as Linux administrator in Internet service provider. Since than I do Linux Operations.
+By time, wor kstyle and toolset have been changing a lot.&lt;/p&gt;
+
+&lt;h3 id=&#34;currently-in-my-favor-are&#34;&gt;currently in my favor are:&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;- ansible, puppet 
+- terraform 
+- lxe, docker containers, KVM and ESXi
+- Debian/RHEL , CoreOS and DCOS
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;mostly-enjoying-working-with&#34;&gt;mostly enjoying working with&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;- aws 
+- digital ocean
+- vmware esxi
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;daily-maintaining&#34;&gt;daily maintaining&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;- nginx, apache
+- mysql, mariadb, monodb, couchDB
+- redis, memcached
+- jenkins, GoCD
+- nagios, munin, grafite, ELK 
+- HAProxy, keepalived, lvs
+- etc ...
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;having-a-look-but-never-carred-procudciton&#34;&gt;having a look but never carred procudciton&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;- openstack
+- kubernetes 
+- always something new from github :)
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

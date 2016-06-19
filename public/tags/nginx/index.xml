@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Nginx on naut&#39;s blog</title>
+    <link>http://hugo.nazaretyan.com/tags/nginx/</link>
+    <description>Recent content in Nginx on naut&#39;s blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <managingEditor>moushegh@gmail.com (Moushegh Nazaretyan)</managingEditor>
+    <webMaster>moushegh@gmail.com (Moushegh Nazaretyan)</webMaster>
+    <lastBuildDate>Fri, 27 Sep 2013 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://hugo.nazaretyan.com/tags/nginx/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>nginx &#43; php-fpm &#43; php-apc &#43; mysql &#43; wordpress perfect way to run a blog</title>
+      <link>http://hugo.nazaretyan.com/post/nginx-php-fpm-php-apc-mysql-wordpress-perfect-way-to-run-a-blog/</link>
+      <pubDate>Fri, 27 Sep 2013 00:00:00 +0000</pubDate>
+      <author>moushegh@gmail.com (Moushegh Nazaretyan)</author>
+      <guid>http://hugo.nazaretyan.com/post/nginx-php-fpm-php-apc-mysql-wordpress-perfect-way-to-run-a-blog/</guid>
+      <description>&lt;p&gt;i recently moved from apache2 to nginx on all my web servers. and feeling happy about that.&lt;/p&gt;
+
+&lt;p&gt;i would like to share configurations since , before and after the move i did load test on my blog and difference on performance was amazing.&lt;/p&gt;
+
+&lt;p&gt;lets consider that we already have a server (VM or not) with running Debian linux. and LAMP with WP on board.&lt;/p&gt;
+
+&lt;p&gt;so all we need to do its to migrate from apache2 to nginx.&lt;/p&gt;
+
+&lt;p&gt;so simple steps are starting of moving apache from port 80 to 81 , to have it somewhere , in case of emergency roll back.&lt;/p&gt;
+
+&lt;p&gt;check your http.conf and vhosts configs and do not forget about ports.conf. move everything to 81 restart apache, check if 80 port is free by netstat -nlptu |grep 80, check that apache is on 81 by netstat -nlptu |grep 81, try to open your WP with &lt;a href=&#34;http://domain:81&#34;&gt;http://domain:81&lt;/a&gt; and if everything works, we can go forward and start to configure nginx.&lt;/p&gt;
+
+&lt;p&gt;so for nginx we will need to use precompiled package from nginx.org or dotdeb or to compile it ourselves. I did compilation in my case, but here we will go with package from dotdeb (more options compiled).&lt;/p&gt;
+
+&lt;p&gt;edit your /etc/apt/source.list and add&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;deb http://www.deb-multimedia.org stable main non-free
+deb http://packages.dotdeb.org squeeze all
+deb-src http://packages.dotdeb.org squeeze all
+deb http://nginx.org/packages/debian/ squeeze nginx
+deb-src http://nginx.org/packages/debian/ squeeze nginx
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;i&amp;#8217;m using debian 6 (did not have time to upgrade to 7 :)) ) so consider of changing squeeze to wheezy in case of you&amp;#8217;re using debian 7, version can be found here cat /etc/debian_version&lt;/p&gt;
+
+&lt;p&gt;so after just usual steps of adding key from foreign repository&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;apt-get update &amp;amp;&amp;amp; apt-get install deb-multimedia-keyring
+wget http://www.dotdeb.org/dotdeb.gpg -O- |apt-key add -
+gpg --keyserver hkp://keys.gnupg.net --recv-keys ABF5BD827BD9BF62
+gpg -a --export 7BD9BF62 | apt-key add -
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;so now dotdeb is trusted and we can do apt-get update and apt-get upgrade, i&amp;#8217;m sure that some php/mysql and apache packages will get updated since debian 6 have old version.&lt;/p&gt;
+
+&lt;p&gt;so now we are ready to install php5-fpm , memcache (to keep php sessions in it), php-apc for caching, nginx itself &lt;img src=&#34;http://i1.wp.com/nazaretyan.com/wp-includes/images/smilies/icon_smile.gif?w=625&#34; alt=&#34;:)&#34; class=&#34;wp-smiley&#34; data-recalc-dims=&#34;1&#34; /&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;apt-get install php5-fpm nginx php5-apc memcached php5-memcached php5-dev 
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;so we can test our nginx installation by trying to open the &lt;a href=&#34;http://domain/&#34;&gt;http://domain/&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;if nginx default page is in place so we are on the right way.&lt;/p&gt;
+
+&lt;p&gt;first thing that we will need to fix its a bug in the file /etc/php5/fpm/php.ini ,&lt;/p&gt;
+
+&lt;p&gt;so open it with your favorite editor and fine the line cgi.fix_pathinfo and change value to 0 .&lt;/p&gt;
+
+&lt;p&gt;after this part is done, we can move on.&lt;/p&gt;
+
+&lt;p&gt;now all we need is to have nginx to work with WP (so php will work via php5-fpm).&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;server {
+listen       80;
+server_name  domane.name wwwdomainname etc;
+root /var/www/domain/;
+
+access_log  /var/log/nginx/domain.access.log ;
+
+location ~ \.php$ {
+try_files $uri =404;
+fastcgi_pass   unix:/tmp/wwwpool.sock;
+fastcgi_cache  one;
+fastcgi_cache_min_uses 3;
+fastcgi_cache_valid 200 301 302 304 5m;
+fastcgi_cache_key &amp;quot;$request_method|$host|$request_uri&amp;quot;;
+fastcgi_index  index.php;
+include fastcgi_params;
+fastcgi_param       SCRIPT_FILENAME  $document_root$fastcgi_script_name;
+fastcgi_ignore_client_abort     off;
+}
+
+location / {
+root   /var/www/domain/;
+index  index.php;
+
+try_files $uri $uri/ /index.php?$args;
+}
+
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&amp;nbsp;&lt;/p&gt;
+
+&lt;p&gt;here you will need to be careful for&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt; fastcgi_pass   unix:/tmp/wwwpool.sock 
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;since this you need to define in php5-fpm config. in /etc/php5/fpm&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

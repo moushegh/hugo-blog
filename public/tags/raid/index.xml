@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Raid on naut&#39;s blog</title>
+    <link>http://hugo.nazaretyan.com/tags/raid/</link>
+    <description>Recent content in Raid on naut&#39;s blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <managingEditor>moushegh@gmail.com (Moushegh Nazaretyan)</managingEditor>
+    <webMaster>moushegh@gmail.com (Moushegh Nazaretyan)</webMaster>
+    <lastBuildDate>Mon, 02 Jun 2014 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://hugo.nazaretyan.com/tags/raid/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>changing disk in MD RAID 1</title>
+      <link>http://hugo.nazaretyan.com/post/changing-disk-in-md-raid-1/</link>
+      <pubDate>Mon, 02 Jun 2014 00:00:00 +0000</pubDate>
+      <author>moushegh@gmail.com (Moushegh Nazaretyan)</author>
+      <guid>http://hugo.nazaretyan.com/post/changing-disk-in-md-raid-1/</guid>
+      <description>
+
+&lt;h1 id=&#34;span-id-used-tools-class-mw-headline-used-tools-span&#34;&gt;&lt;span id=&#34;USED_TOOLS&#34; class=&#34;mw-headline&#34;&gt;USED TOOLS &lt;/span&gt;&lt;/h1&gt;
+
+&lt;pre&gt;apt-get update
+apt-get install hdparm gdisk parted
+&lt;/pre&gt;
+
+&lt;h1 id=&#34;span-id-disabling-disk-before-change-class-mw-headline-disabling-disk-before-change-span&#34;&gt; &lt;span id=&#34;DISABLING_DISK_BEFORE_CHANGE&#34; class=&#34;mw-headline&#34;&gt;DISABLING DISK BEFORE CHANGE &lt;/span&gt;&lt;/h1&gt;
+
+&lt;pre&gt;&lt;span style=&#34;color: #ff0000;&#34;&gt;(note that MD RAID mode must be 1, if it 0 you will kill system on this step)
+&lt;/span&gt;&lt;/pre&gt;
+
+&lt;p&gt;see which partition is binded to which MD device&lt;/p&gt;
+
+&lt;pre&gt;cat /proc/mdstat  
+  
+&lt;/pre&gt;
+
+&lt;p&gt;output must be like, where (F) indicates that partition is marked as faulty&lt;/p&gt;
+
+&lt;pre&gt;Personalities : [raid1]
+ md3 : active raid1 sda4[2](F) sdb4[1]
+     1822442815 blocks super 1.2 [2/1] [_U]
+ md2 : active raid1 sda3[2](F) sdb3[1]
+     1073740664 blocks super 1.2 [2/1] [_U]
+&lt;/pre&gt;
+
+&lt;p&gt;set partition as faulty for particular MD device&lt;/p&gt;
+
+&lt;pre&gt;mdadm --manage --set-faulty /dev/mdX /dev/sdX1
+&lt;/pre&gt;
+
+&lt;p&gt;output must be similar to&lt;/p&gt;
+
+&lt;pre&gt;mdadm: set /dev/sda2 faulty in /dev/md1
+&lt;/pre&gt;
+
+&lt;p&gt;repeat same step for all partitions for particular drive&lt;/p&gt;
+
+&lt;p&gt;after removing all partitions from broken disk, mdstat output must be similar to&lt;/p&gt;
+
+&lt;pre&gt;Personalities : [raid1]
+md3 : active raid1 sdb4[1]
+     1822442815 blocks super 1.2 [2/1] [_U]
+md2 : active raid1 sdb3[1]
+     1073740664 blocks super 1.2 [2/1] [_U]
+md1 : active raid1 sdb2[1]
+     524276 blocks super 1.2 [2/1] [_U]
+md0 : active raid1 sdb1[1]
+     33553336 blocks super 1.2 [2/1] [_U]
+&lt;/pre&gt;
+
+&lt;p&gt;now since we set all pratitions of broken disk to faulty &amp;#8211; we can remove them from md raid&lt;/p&gt;
+
+&lt;pre&gt;mdadm --manage /dev/mdX -r /dev/sdX1
+&lt;/pre&gt;
+
+&lt;p&gt;output must be similar to&lt;/p&gt;
+
+&lt;pre&gt;mdadm: hot removed /dev/sdX1 from /dev/mdX
+&lt;/pre&gt;
+
+&lt;p&gt;repeat same setp for all partitions for particualr drive&lt;/p&gt;
+
+&lt;p&gt;mdstat must look similar to this&lt;/p&gt;
+
+&lt;pre&gt;Personalities : [raid1]
+md3 : active raid1 sdb4[1]
+     1822442815 blocks super 1.2 [2/1] [_U]
+md2 : active raid1 sdb3[1]
+     1073740664 blocks super 1.2 [2/1] [_U]
+md1 : active raid1 sdb2[1]
+     524276 blocks super 1.2 [2/1] [_U]
+md0 : active raid1 sdb1[1]
+     33553336 blocks super 1.2 [2/1] [_U]
+unused devices: &amp;lt;none&amp;gt;
+&lt;/pre&gt;
+
+&lt;p&gt;if all steps are kept correct, you can now force linux to remove hard drive (in case you want to do HOT swap)&lt;/p&gt;
+
+&lt;pre&gt;echo 1 &amp;gt; /sys/block/sdX/device/delete 
+&lt;/pre&gt;
+
+&lt;p&gt;where X is actual broken drive letter&lt;/p&gt;
+
+&lt;pre&gt;dmsg
+&lt;/pre&gt;
+
+&lt;p&gt;output must be like this&lt;/p&gt;
+
+&lt;pre&gt;[383287.786029] sd 0:0:0:0: [sda] Stopping disk
+&lt;/pre&gt;
+
+&lt;p&gt;congratz you manage to remove disk without killing system &amp;#8211; go smoke now.&lt;/p&gt;
+
+&lt;h1 id=&#34;span-id-adding-new-disk-hot-swap-scenario-28without-reboot-29-class-mw-headline-adding-new-disk-hot-swap-scenario-without-reboot-span&#34;&gt;&lt;span id=&#34;ADDING_NEW_DISK_HOT_SWAP_SCENARIO_.28without_reboot.29&#34; class=&#34;mw-headline&#34;&gt;ADDING NEW DISK HOT SWAP SCENARIO (without reboot)&lt;/span&gt;&lt;/h1&gt;
+
+&lt;p&gt;in case HDD was HOT swaped (without system restart) you need to force system to rescan controller and detect new drive&lt;/p&gt;
+
+&lt;pre&gt;echo &#34;0 0 0&#34; &amp;gt;/sys/class/scsi_host/host&amp;lt;n&amp;gt;/scan
+&lt;/pre&gt;
+
+&lt;p&gt;where &lt;n&gt; is host controller number&lt;/p&gt;
+
+&lt;pre&gt;[383444.439888] ata1: hard resetting link
+[383444.756112] ata1: SATA link up 3.0 Gbps (SStatus 123 SControl 300)
+[383445.042099] ata1.00: ATA-8: ST3000DM001-9YN166, CC4C, max UDMA/133
+[383445.042139] ata1.00: 5860533168 sectors, multi 0: LBA48 NCQ (depth 31/32), AA
+[383445.072228] ata1.00: configured for UDMA/133
+[383445.072270] ata1: EH complete
+[383445.072467] scsi 0:0:0:0: Direct-Access     ATA      ST3000DM001-9YN1 CC4C PQ: 0 ANSI: 5
+[383445.072834] sd 0:0:0:0: [sda] 5860533168 512-byte logical blocks: (3.00 TB/2.72 TiB)
+[383445.072846] sd 0:0:0:0: Attached scsi generic sg0 type 0
+[383445.072924] sd 0:0:0:0: [sda] 4096-byte physical blocks
+[383445.073364] sd 0:0:0:0: [sda] Write Protect is off
+[383445.073402] sd 0:0:0:0: [sda] Mode Sense: 00 3a 00 00
+[383445.073587] sd 0:0:0:0: [sda] Write cache: enabled, read cache: enabled, doesn&#39;t support DPO or FUA
+[383445.122528]  sda: sda1 sda2 sda3 sda4 sda5
+[383445.124355] sd 0:0:0:0: [sda] Attached SCSI disk
+&lt;/pre&gt;
+
+&lt;p&gt;so now linux found your new replaced hard drive and its time for partitioning.&lt;/p&gt;
+
+&lt;h1 id=&#34;span-id-adding-new-disk-cold-swap-scenario-28with-reboot-29-class-mw-headline-adding-new-disk-cold-swap-scenario-with-reboot-span&#34;&gt; &lt;span id=&#34;ADDING_NEW_DISK_COLD_SWAP_SCENARIO_.28with_reboot.29&#34; class=&#34;mw-headline&#34;&gt;ADDING NEW DISK COLD SWAP SCENARIO (with reboot)&lt;/span&gt;&lt;/h1&gt;
+
+&lt;p&gt;service providers like &amp;#8220;hetzner&amp;#8221; are not supporting hot swap, so they always need to reboot system in order to change HDD,since we deleted hdd from system. its now safe to shutdown and ask provider to swap disk. after swap they will switch on system back. disk will get same drive letter as old &amp;#8220;broken&amp;#8221; one.&lt;/p&gt;
+
+&lt;h1 id=&#34;span-id-preparing-disk-for-md-raid-membership-class-mw-headline-preparing-disk-for-md-raid-membership-span&#34;&gt;&lt;span id=&#34;PREPARING_DISK_FOR_MD_RAID_MEMBERSHIP&#34; class=&#34;mw-headline&#34;&gt;PREPARING DISK FOR MD RAID MEMBERSHIP&lt;/span&gt;&lt;/h1&gt;
+
+&lt;p&gt;if disk is bigger then 2TB &amp;#8211; it must use GPT. where Y is drive letter for new changed HDD&lt;/p&gt;
+
+&lt;pre&gt;parted /dev/sdY
+mklabel GPT
+yes
+quit
+&lt;/pre&gt;
+
+&lt;p&gt;we will need to recreate same partition table on newly chagned drive (VERY VERY CAREFULY)&lt;/p&gt;
+
+&lt;pre&gt;sgdisk -R=/dev/sdX /dev/sdY
+&lt;/pre&gt;
+
+&lt;p&gt;where X is exisiting drive in MD array and Y is new changed drive&lt;/p&gt;
+
+&lt;pre&gt;sgdisk -G /dev/sdY
+&lt;/pre&gt;
+
+&lt;p&gt;The second command randomizes the GUID on the disk and all the partitions (MUST for uninqness)&lt;/p&gt;
+
+&lt;p&gt;if everything went without errors on this stage, you are rady to add disk back to MD RAID.&lt;/p&gt;
+
+&lt;h1 id=&#34;span-id-adding-disk-back-to-running-mdraid-class-mw-headline-adding-disk-back-to-running-mdraid-span&#34;&gt;&lt;span id=&#34;ADDING_DISK_BACK_TO_RUNNING_MDRAID&#34; class=&#34;mw-headline&#34;&gt;ADDING DISK BACK TO RUNNING MDRAID&lt;/span&gt;&lt;/h1&gt;
+
+&lt;p&gt;to see which partition belongs to which MD device&lt;/p&gt;
+
+&lt;pre&gt;watch cat /proc/mdstat
+&lt;/pre&gt;
+
+&lt;p&gt;then&lt;/p&gt;
+
+&lt;pre&gt;mdadm --manage /dev/mdX -a /dev/sdX1
+&lt;/pre&gt;
+
+&lt;p&gt;output&lt;/p&gt;
+
+&lt;pre&gt;mdadm: added /dev/sdX1
+&lt;/pre&gt;
+
+&lt;p&gt;MDRAID will start to sync drives in order to have data on both drives in parallel, you can follow it by&lt;/p&gt;
+
+&lt;pre&gt;cat /proc/mdstat
+&lt;/pre&gt;
+
+&lt;p&gt;output&lt;/p&gt;
+
+&lt;pre&gt;Personalities : [raid1]
+md3 : active raid1 sda4[2] sdb4[1]
+     1822442815 blocks super 1.2 [2/1] [_U]
+     [===========&amp;gt;.........]  recovery = 57.2% (1043526976/1822442815) finish=211.8min speed=61278K/sec
+md2 : active raid1 sda3[2] sdb3[1]
+     1073740664 blocks super 1.2 [2/1] [_U]
+       resync=DELAYED
+md1 : active raid1 sda2[2] sdb2[1]
+     524276 blocks super 1.2 [2/1] [_U]
+       resync=DELAYED
+md0 : active raid1 sda1[2] sdb1[1]
+     33553336 blocks super 1.2 [2/1] [_U]
+       resync=DELAYED
+unused devices: &amp;lt;none&amp;gt;
+&lt;/pre&gt;
+
+&lt;p&gt;where &amp;#8220;resync=DELAYED&amp;#8221; means that sync is in &amp;#8220;wait state&amp;#8221; &amp;#8211; only 1 MD device can sync in same time.&lt;/p&gt;
+
+&lt;h1 id=&#34;span-id-adding-boot-loader-class-mw-headline-adding-boot-loader-span&#34;&gt; &lt;span id=&#34;ADDING_BOOT_LOADER&#34; class=&#34;mw-headline&#34;&gt;ADDING BOOT LOADER&lt;/span&gt;&lt;/h1&gt;
+
+&lt;p&gt;after all the steps you need to tell grub that new disk is bootlbe also&lt;/p&gt;
+
+&lt;pre&gt;grub-install /dev/sdY
+&lt;/pre&gt;
+
+&lt;p&gt;output&lt;/p&gt;
+
+&lt;pre&gt;Installation finished. No error reported
+&lt;/pre&gt;
+
+&lt;p&gt;have fun.&lt;/p&gt;
+
+&lt;div class=&#34;sharedaddy sd-sharing-enabled&#34;&gt;
+  &lt;div class=&#34;robots-nocontent sd-block sd-social sd-social-icon-text sd-sharing&#34;&gt;
+    &lt;h3 class=&#34;sd-title&#34;&gt;
+      Share this:
+    &lt;/h3&gt;
+    
+    &lt;div class=&#34;sd-content&#34;&gt;
+      &lt;ul&gt;
+        &lt;li&gt;
+          &lt;a href=&#34;#&#34; class=&#34;sharing-anchor sd-button share-more&#34;&gt;&lt;span&gt;Share&lt;/span&gt;&lt;/a&gt;
+        &lt;/li&gt;
+        &lt;li class=&#34;share-end&#34;&gt;
+        &lt;/li&gt;
+      &lt;/ul&gt;
+      
+      &lt;div class=&#34;sharing-hidden&#34;&gt;
+        &lt;div class=&#34;inner&#34; style=&#34;display: none;&#34;&gt;
+          &lt;ul&gt;
+            &lt;li class=&#34;share-email&#34;&gt;
+              &lt;a rel=&#34;nofollow&#34; data-shared=&#34;&#34; class=&#34;share-email sd-button share-icon&#34; href=&#34;https://nazaretyan.com/changing-disk-in-md-raid-1/?share=email&#34; title=&#34;Click to email this to a friend&#34;&gt;&lt;span&gt;Email&lt;/span&gt;&lt;/a&gt;
+            &lt;/li&gt;
+            &lt;li class=&#34;share-facebook&#34;&gt;
+              &lt;a rel=&#34;nofollow&#34; data-shared=&#34;sharing-facebook-259&#34; class=&#34;share-facebook sd-button share-icon&#34; href=&#34;https://nazaretyan.com/changing-disk-in-md-raid-1/?share=facebook&#34; title=&#34;Share on Facebook&#34;&gt;&lt;span&gt;Facebook&lt;/span&gt;&lt;/a&gt;
+            &lt;/li&gt;
+            &lt;li class=&#34;share-end&#34;&gt;
+            &lt;/li&gt;
+            &lt;li class=&#34;share-reddit&#34;&gt;
+              &lt;a rel=&#34;nofollow&#34; data-shared=&#34;&#34; class=&#34;share-reddit sd-button share-icon&#34; href=&#34;https://nazaretyan.com/changing-disk-in-md-raid-1/?share=reddit&#34; title=&#34;Click to share on Reddit&#34;&gt;&lt;span&gt;Reddit&lt;/span&gt;&lt;/a&gt;
+            &lt;/li&gt;
+            &lt;li class=&#34;share-twitter&#34;&gt;
+              &lt;a rel=&#34;nofollow&#34; data-shared=&#34;sharing-twitter-259&#34; class=&#34;share-twitter sd-button share-icon&#34; href=&#34;https://nazaretyan.com/changing-disk-in-md-raid-1/?share=twitter&#34; title=&#34;Click to share on Twitter&#34;&gt;&lt;span&gt;Twitter&lt;/span&gt;&lt;/a&gt;
+            &lt;/li&gt;
+            &lt;li class=&#34;share-end&#34;&gt;
+            &lt;/li&gt;
+            &lt;li class=&#34;share-tumblr&#34;&gt;
+              &lt;a rel=&#34;nofollow&#34; data-shared=&#34;&#34; class=&#34;share-tumblr sd-button share-icon&#34; href=&#34;https://nazaretyan.com/changing-disk-in-md-raid-1/?share=tumblr&#34; title=&#34;Click to share on Tumblr&#34;&gt;&lt;span&gt;Tumblr&lt;/span&gt;&lt;/a&gt;
+            &lt;/li&gt;
+            &lt;li class=&#34;share-linkedin&#34;&gt;
+              &lt;a rel=&#34;nofollow&#34; data-shared=&#34;sharing-linkedin-259&#34; class=&#34;share-linkedin sd-button share-icon&#34; href=&#34;https://nazaretyan.com/changing-disk-in-md-raid-1/?share=linkedin&#34; title=&#34;Click to share on LinkedIn&#34;&gt;&lt;span&gt;LinkedIn&lt;/span&gt;&lt;/a&gt;
+            &lt;/li&gt;
+            &lt;li class=&#34;share-end&#34;&gt;
+            &lt;/li&gt;
+            &lt;li class=&#34;share-stumbleupon&#34;&gt;
+              &lt;a rel=&#34;nofollow&#34; data-shared=&#34;&#34; class=&#34;share-stumbleupon sd-button share-icon&#34; href=&#34;https://nazaretyan.com/changing-disk-in-md-raid-1/?share=stumbleupon&#34; title=&#34;Click to share on StumbleUpon&#34;&gt;&lt;span&gt;StumbleUpon&lt;/span&gt;&lt;/a&gt;
+            &lt;/li&gt;
+            &lt;li class=&#34;share-pinterest&#34;&gt;
+              &lt;a rel=&#34;nofollow&#34; data-shared=&#34;sharing-pinterest-259&#34; class=&#34;share-pinterest sd-button share-icon&#34; href=&#34;https://nazaretyan.com/changing-disk-in-md-raid-1/?share=pinterest&#34; title=&#34;Click to share on Pinterest&#34;&gt;&lt;span&gt;Pinterest&lt;/span&gt;&lt;/a&gt;
+            &lt;/li&gt;
+            &lt;li class=&#34;share-end&#34;&gt;
+            &lt;/li&gt;
+            &lt;li class=&#34;share-google-plus-1&#34;&gt;
+              &lt;a rel=&#34;nofollow&#34; data-shared=&#34;sharing-google-259&#34; class=&#34;share-google-plus-1 sd-button share-icon&#34; href=&#34;https://nazaretyan.com/changing-disk-in-md-raid-1/?share=google-plus-1&#34; title=&#34;Click to share on Google+&#34;&gt;&lt;span&gt;Google&lt;/span&gt;&lt;/a&gt;
+            &lt;/li&gt;
+            &lt;li class=&#34;share-print&#34;&gt;
+              &lt;a rel=&#34;nofollow&#34; data-shared=&#34;&#34; class=&#34;share-print sd-button share-icon&#34; href=&#34;https://nazaretyan.com/changing-disk-in-md-raid-1/&#34; title=&#34;Click to print&#34;&gt;&lt;span&gt;Print&lt;/span&gt;&lt;/a&gt;
+            &lt;/li&gt;
+            &lt;li class=&#34;share-end&#34;&gt;
+            &lt;/li&gt;
+            &lt;li class=&#34;share-end&#34;&gt;
+            &lt;/li&gt;
+          &lt;/ul&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;div class=&#39;sharedaddy sd-block sd-like jetpack-likes-widget-wrapper jetpack-likes-widget-unloaded&#39; id=&#39;like-post-wrapper-39401321-259-5766a03cef057&#39; data-src=&#39;//widgets.wp.com/likes/#blog_id=39401321&amp;post_id=259&amp;origin=nazaretyan.com&amp;obj_id=39401321-259-5766a03cef057&#39; data-name=&#39;like-post-frame-39401321-259-5766a03cef057&#39;&gt;
+  &lt;h3 class=&#39;sd-title&#39;&gt;
+    Like this:
+  &lt;/h3&gt;
+  
+  &lt;div class=&#39;likes-widget-placeholder post-likes-widget-placeholder&#39; style=&#39;height:55px&#39;&gt;
+    &lt;span class=&#39;button&#39;&gt;&lt;span&gt;Like&lt;/span&gt;&lt;/span&gt; &lt;span class=&#34;loading&#34;&gt;Loading...&lt;/span&gt;
+  &lt;/div&gt;
+  
+
+&lt;p&gt;&lt;span class=&#39;sd-text-color&#39;&gt;&lt;/span&gt;&lt;a class=&#39;sd-link-color&#39;&gt;&lt;/a&gt;
+&lt;/div&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

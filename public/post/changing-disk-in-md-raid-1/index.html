@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article# website: http://ogp.me/ns/website#">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+    <meta name="description" content="">
+    <meta property="og:title" content="changing disk in MD RAID 1">
+    
+    <meta property="og:type" content="article">
+    <meta property="article:published_time" content="2014-06-02">
+    
+    <meta property="og:description" content="">
+    <meta property="og:url" content="http://hugo.nazaretyan.com/post/changing-disk-in-md-raid-1/">
+    <meta property="og:site_name" content="naut&#39;s blog">
+    
+    <meta property="og:tags" content="gdisk">
+    
+    <meta property="og:tags" content="how to">
+    
+    <meta property="og:tags" content="linux raid">
+    
+    <meta property="og:tags" content="mdraid">
+    
+    <meta property="og:tags" content="parted">
+    
+    <meta property="og:tags" content="raid">
+    
+    <meta property="og:tags" content="software raid">
+    
+    <meta name="generator" content="Hugo 0.16" />
+    <title>changing disk in MD RAID 1 &middot; naut&#39;s blog</title>
+    
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
+    
+    <link rel="stylesheet" href="http://hugo.nazaretyan.com/css/style.css">
+    <link href="" rel="alternate" type="application/rss+xml" title="naut&#39;s blog" />
+
+    
+    
+</head>
+<body>
+<nav class="navbar navbar-default navbar-fixed-top visible-xs">
+	<div class="container-fluid">
+		<div class="navbar-header">
+			<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+				<span class="sr-only">Toggle navigation</span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</button>
+			
+				<a class="navbar-brand" href="http://hugo.nazaretyan.com/">Moushegh Nazaretyan</a>
+			
+		</div>
+		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+			<ul class="nav navbar-nav">
+				
+				
+					<li><a href="http://hugo.nazaretyan.com/about/">About</a></li>
+				
+					<li><a href="http://hugo.nazaretyan.com/post/">Blog</a></li>
+				
+					<li><a href="http://hugo.nazaretyan.com/cv/">CV</a></li>
+				
+			</ul>
+		</div>
+	</div>
+</nav>
+<div class="container-fluid">
+	<div class="row">
+		<div id="menu" class="hidden-xs col-sm-4 col-md-3">
+	<div id="menu-content" class="vertical-align">
+		
+			<h1 class="text-center"><a href="http://hugo.nazaretyan.com/">Moushegh Nazaretyan</a></h1>
+		
+		
+		
+			<small class="text-center center-block">Linux Operations</small>
+		
+		
+		
+			<img id="profile-pic" src="http://hugo.nazaretyan.com//img/moushegh.jpg" alt="My Picture" class="img-circle center-block">
+		
+		<div id="social" class="text-center">
+			<a href="https://twitter.com/darthmaster"><i class="fa fa-twitter fa-2x"></i></a>
+			<a href="https://www.linkedin.com/in/moushegh"><i class="fa fa-linkedin fa-2x"></i></a>
+			<a href="https://github.com/moushegh"><i class="fa fa-github fa-2x"></i></a>
+			<a href="mailto:moushegh@nazaretyan.com"><i class="fa fa-envelope-o fa-2x"></i></a>
+		</div>
+		<div id="links" class="text-center">
+			
+			
+				<a href="http://hugo.nazaretyan.com/about/">About</a>
+			
+				<a href="http://hugo.nazaretyan.com/post/">Blog</a>
+			
+				<a href="http://hugo.nazaretyan.com/cv/">CV</a>
+			
+		</div>
+	</div>
+</div>
+		<div id="content" class="col-xs-12 col-sm-8 col-md-9">
+			<div class="row">
+				<div id="post" class="col-sm-offset-1 col-sm-10 col-md-10 col-lg-8">
+
+<main>
+	<header>
+		<h1>changing disk in MD RAID 1</h1>
+	</header>
+
+	<article>
+		
+
+<h1 id="span-id-used-tools-class-mw-headline-used-tools-span"><span id="USED_TOOLS" class="mw-headline">USED TOOLS </span></h1>
+
+<pre>apt-get update
+apt-get install hdparm gdisk parted
+</pre>
+
+<h1 id="span-id-disabling-disk-before-change-class-mw-headline-disabling-disk-before-change-span"> <span id="DISABLING_DISK_BEFORE_CHANGE" class="mw-headline">DISABLING DISK BEFORE CHANGE </span></h1>
+
+<pre><span style="color: #ff0000;">(note that MD RAID mode must be 1, if it 0 you will kill system on this step)
+</span></pre>
+
+<p>see which partition is binded to which MD device</p>
+
+<pre>cat /proc/mdstat  
+  
+</pre>
+
+<p>output must be like, where (F) indicates that partition is marked as faulty</p>
+
+<pre>Personalities : [raid1]
+ md3 : active raid1 sda4[2](F) sdb4[1]
+     1822442815 blocks super 1.2 [2/1] [_U]
+ md2 : active raid1 sda3[2](F) sdb3[1]
+     1073740664 blocks super 1.2 [2/1] [_U]
+</pre>
+
+<p>set partition as faulty for particular MD device</p>
+
+<pre>mdadm --manage --set-faulty /dev/mdX /dev/sdX1
+</pre>
+
+<p>output must be similar to</p>
+
+<pre>mdadm: set /dev/sda2 faulty in /dev/md1
+</pre>
+
+<p>repeat same step for all partitions for particular drive</p>
+
+<p>after removing all partitions from broken disk, mdstat output must be similar to</p>
+
+<pre>Personalities : [raid1]
+md3 : active raid1 sdb4[1]
+     1822442815 blocks super 1.2 [2/1] [_U]
+md2 : active raid1 sdb3[1]
+     1073740664 blocks super 1.2 [2/1] [_U]
+md1 : active raid1 sdb2[1]
+     524276 blocks super 1.2 [2/1] [_U]
+md0 : active raid1 sdb1[1]
+     33553336 blocks super 1.2 [2/1] [_U]
+</pre>
+
+<p>now since we set all pratitions of broken disk to faulty &#8211; we can remove them from md raid</p>
+
+<pre>mdadm --manage /dev/mdX -r /dev/sdX1
+</pre>
+
+<p>output must be similar to</p>
+
+<pre>mdadm: hot removed /dev/sdX1 from /dev/mdX
+</pre>
+
+<p>repeat same setp for all partitions for particualr drive</p>
+
+<p>mdstat must look similar to this</p>
+
+<pre>Personalities : [raid1]
+md3 : active raid1 sdb4[1]
+     1822442815 blocks super 1.2 [2/1] [_U]
+md2 : active raid1 sdb3[1]
+     1073740664 blocks super 1.2 [2/1] [_U]
+md1 : active raid1 sdb2[1]
+     524276 blocks super 1.2 [2/1] [_U]
+md0 : active raid1 sdb1[1]
+     33553336 blocks super 1.2 [2/1] [_U]
+unused devices: &lt;none&gt;
+</pre>
+
+<p>if all steps are kept correct, you can now force linux to remove hard drive (in case you want to do HOT swap)</p>
+
+<pre>echo 1 &gt; /sys/block/sdX/device/delete 
+</pre>
+
+<p>where X is actual broken drive letter</p>
+
+<pre>dmsg
+</pre>
+
+<p>output must be like this</p>
+
+<pre>[383287.786029] sd 0:0:0:0: [sda] Stopping disk
+</pre>
+
+<p>congratz you manage to remove disk without killing system &#8211; go smoke now.</p>
+
+<h1 id="span-id-adding-new-disk-hot-swap-scenario-28without-reboot-29-class-mw-headline-adding-new-disk-hot-swap-scenario-without-reboot-span"><span id="ADDING_NEW_DISK_HOT_SWAP_SCENARIO_.28without_reboot.29" class="mw-headline">ADDING NEW DISK HOT SWAP SCENARIO (without reboot)</span></h1>
+
+<p>in case HDD was HOT swaped (without system restart) you need to force system to rescan controller and detect new drive</p>
+
+<pre>echo "0 0 0" &gt;/sys/class/scsi_host/host&lt;n&gt;/scan
+</pre>
+
+<p>where <n> is host controller number</p>
+
+<pre>[383444.439888] ata1: hard resetting link
+[383444.756112] ata1: SATA link up 3.0 Gbps (SStatus 123 SControl 300)
+[383445.042099] ata1.00: ATA-8: ST3000DM001-9YN166, CC4C, max UDMA/133
+[383445.042139] ata1.00: 5860533168 sectors, multi 0: LBA48 NCQ (depth 31/32), AA
+[383445.072228] ata1.00: configured for UDMA/133
+[383445.072270] ata1: EH complete
+[383445.072467] scsi 0:0:0:0: Direct-Access     ATA      ST3000DM001-9YN1 CC4C PQ: 0 ANSI: 5
+[383445.072834] sd 0:0:0:0: [sda] 5860533168 512-byte logical blocks: (3.00 TB/2.72 TiB)
+[383445.072846] sd 0:0:0:0: Attached scsi generic sg0 type 0
+[383445.072924] sd 0:0:0:0: [sda] 4096-byte physical blocks
+[383445.073364] sd 0:0:0:0: [sda] Write Protect is off
+[383445.073402] sd 0:0:0:0: [sda] Mode Sense: 00 3a 00 00
+[383445.073587] sd 0:0:0:0: [sda] Write cache: enabled, read cache: enabled, doesn't support DPO or FUA
+[383445.122528]  sda: sda1 sda2 sda3 sda4 sda5
+[383445.124355] sd 0:0:0:0: [sda] Attached SCSI disk
+</pre>
+
+<p>so now linux found your new replaced hard drive and its time for partitioning.</p>
+
+<h1 id="span-id-adding-new-disk-cold-swap-scenario-28with-reboot-29-class-mw-headline-adding-new-disk-cold-swap-scenario-with-reboot-span"> <span id="ADDING_NEW_DISK_COLD_SWAP_SCENARIO_.28with_reboot.29" class="mw-headline">ADDING NEW DISK COLD SWAP SCENARIO (with reboot)</span></h1>
+
+<p>service providers like &#8220;hetzner&#8221; are not supporting hot swap, so they always need to reboot system in order to change HDD,since we deleted hdd from system. its now safe to shutdown and ask provider to swap disk. after swap they will switch on system back. disk will get same drive letter as old &#8220;broken&#8221; one.</p>
+
+<h1 id="span-id-preparing-disk-for-md-raid-membership-class-mw-headline-preparing-disk-for-md-raid-membership-span"><span id="PREPARING_DISK_FOR_MD_RAID_MEMBERSHIP" class="mw-headline">PREPARING DISK FOR MD RAID MEMBERSHIP</span></h1>
+
+<p>if disk is bigger then 2TB &#8211; it must use GPT. where Y is drive letter for new changed HDD</p>
+
+<pre>parted /dev/sdY
+mklabel GPT
+yes
+quit
+</pre>
+
+<p>we will need to recreate same partition table on newly chagned drive (VERY VERY CAREFULY)</p>
+
+<pre>sgdisk -R=/dev/sdX /dev/sdY
+</pre>
+
+<p>where X is exisiting drive in MD array and Y is new changed drive</p>
+
+<pre>sgdisk -G /dev/sdY
+</pre>
+
+<p>The second command randomizes the GUID on the disk and all the partitions (MUST for uninqness)</p>
+
+<p>if everything went without errors on this stage, you are rady to add disk back to MD RAID.</p>
+
+<h1 id="span-id-adding-disk-back-to-running-mdraid-class-mw-headline-adding-disk-back-to-running-mdraid-span"><span id="ADDING_DISK_BACK_TO_RUNNING_MDRAID" class="mw-headline">ADDING DISK BACK TO RUNNING MDRAID</span></h1>
+
+<p>to see which partition belongs to which MD device</p>
+
+<pre>watch cat /proc/mdstat
+</pre>
+
+<p>then</p>
+
+<pre>mdadm --manage /dev/mdX -a /dev/sdX1
+</pre>
+
+<p>output</p>
+
+<pre>mdadm: added /dev/sdX1
+</pre>
+
+<p>MDRAID will start to sync drives in order to have data on both drives in parallel, you can follow it by</p>
+
+<pre>cat /proc/mdstat
+</pre>
+
+<p>output</p>
+
+<pre>Personalities : [raid1]
+md3 : active raid1 sda4[2] sdb4[1]
+     1822442815 blocks super 1.2 [2/1] [_U]
+     [===========&gt;.........]  recovery = 57.2% (1043526976/1822442815) finish=211.8min speed=61278K/sec
+md2 : active raid1 sda3[2] sdb3[1]
+     1073740664 blocks super 1.2 [2/1] [_U]
+       resync=DELAYED
+md1 : active raid1 sda2[2] sdb2[1]
+     524276 blocks super 1.2 [2/1] [_U]
+       resync=DELAYED
+md0 : active raid1 sda1[2] sdb1[1]
+     33553336 blocks super 1.2 [2/1] [_U]
+       resync=DELAYED
+unused devices: &lt;none&gt;
+</pre>
+
+<p>where &#8220;resync=DELAYED&#8221; means that sync is in &#8220;wait state&#8221; &#8211; only 1 MD device can sync in same time.</p>
+
+<h1 id="span-id-adding-boot-loader-class-mw-headline-adding-boot-loader-span"> <span id="ADDING_BOOT_LOADER" class="mw-headline">ADDING BOOT LOADER</span></h1>
+
+<p>after all the steps you need to tell grub that new disk is bootlbe also</p>
+
+<pre>grub-install /dev/sdY
+</pre>
+
+<p>output</p>
+
+<pre>Installation finished. No error reported
+</pre>
+
+<p>have fun.</p>
+
+<div class="sharedaddy sd-sharing-enabled">
+  <div class="robots-nocontent sd-block sd-social sd-social-icon-text sd-sharing">
+    <h3 class="sd-title">
+      Share this:
+    </h3>
+    
+    <div class="sd-content">
+      <ul>
+        <li>
+          <a href="#" class="sharing-anchor sd-button share-more"><span>Share</span></a>
+        </li>
+        <li class="share-end">
+        </li>
+      </ul>
+      
+      <div class="sharing-hidden">
+        <div class="inner" style="display: none;">
+          <ul>
+            <li class="share-email">
+              <a rel="nofollow" data-shared="" class="share-email sd-button share-icon" href="https://nazaretyan.com/changing-disk-in-md-raid-1/?share=email" title="Click to email this to a friend"><span>Email</span></a>
+            </li>
+            <li class="share-facebook">
+              <a rel="nofollow" data-shared="sharing-facebook-259" class="share-facebook sd-button share-icon" href="https://nazaretyan.com/changing-disk-in-md-raid-1/?share=facebook" title="Share on Facebook"><span>Facebook</span></a>
+            </li>
+            <li class="share-end">
+            </li>
+            <li class="share-reddit">
+              <a rel="nofollow" data-shared="" class="share-reddit sd-button share-icon" href="https://nazaretyan.com/changing-disk-in-md-raid-1/?share=reddit" title="Click to share on Reddit"><span>Reddit</span></a>
+            </li>
+            <li class="share-twitter">
+              <a rel="nofollow" data-shared="sharing-twitter-259" class="share-twitter sd-button share-icon" href="https://nazaretyan.com/changing-disk-in-md-raid-1/?share=twitter" title="Click to share on Twitter"><span>Twitter</span></a>
+            </li>
+            <li class="share-end">
+            </li>
+            <li class="share-tumblr">
+              <a rel="nofollow" data-shared="" class="share-tumblr sd-button share-icon" href="https://nazaretyan.com/changing-disk-in-md-raid-1/?share=tumblr" title="Click to share on Tumblr"><span>Tumblr</span></a>
+            </li>
+            <li class="share-linkedin">
+              <a rel="nofollow" data-shared="sharing-linkedin-259" class="share-linkedin sd-button share-icon" href="https://nazaretyan.com/changing-disk-in-md-raid-1/?share=linkedin" title="Click to share on LinkedIn"><span>LinkedIn</span></a>
+            </li>
+            <li class="share-end">
+            </li>
+            <li class="share-stumbleupon">
+              <a rel="nofollow" data-shared="" class="share-stumbleupon sd-button share-icon" href="https://nazaretyan.com/changing-disk-in-md-raid-1/?share=stumbleupon" title="Click to share on StumbleUpon"><span>StumbleUpon</span></a>
+            </li>
+            <li class="share-pinterest">
+              <a rel="nofollow" data-shared="sharing-pinterest-259" class="share-pinterest sd-button share-icon" href="https://nazaretyan.com/changing-disk-in-md-raid-1/?share=pinterest" title="Click to share on Pinterest"><span>Pinterest</span></a>
+            </li>
+            <li class="share-end">
+            </li>
+            <li class="share-google-plus-1">
+              <a rel="nofollow" data-shared="sharing-google-259" class="share-google-plus-1 sd-button share-icon" href="https://nazaretyan.com/changing-disk-in-md-raid-1/?share=google-plus-1" title="Click to share on Google+"><span>Google</span></a>
+            </li>
+            <li class="share-print">
+              <a rel="nofollow" data-shared="" class="share-print sd-button share-icon" href="https://nazaretyan.com/changing-disk-in-md-raid-1/" title="Click to print"><span>Print</span></a>
+            </li>
+            <li class="share-end">
+            </li>
+            <li class="share-end">
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class='sharedaddy sd-block sd-like jetpack-likes-widget-wrapper jetpack-likes-widget-unloaded' id='like-post-wrapper-39401321-259-5766a03cef057' data-src='//widgets.wp.com/likes/#blog_id=39401321&post_id=259&origin=nazaretyan.com&obj_id=39401321-259-5766a03cef057' data-name='like-post-frame-39401321-259-5766a03cef057'>
+  <h3 class='sd-title'>
+    Like this:
+  </h3>
+  
+  <div class='likes-widget-placeholder post-likes-widget-placeholder' style='height:55px'>
+    <span class='button'><span>Like</span></span> <span class="loading">Loading...</span>
+  </div>
+  
+
+<p><span class='sd-text-color'></span><a class='sd-link-color'></a>
+</div></p>
+
+	</article>
+</main>
+
+<div id="bottom-nav" class="text-center center-block">
+	<a href=" http://hugo.nazaretyan.com/" class="btn btn-default"><i class="fa fa-home"></i> Home</a>
+</div>
+
+
+  <div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'moushegh';
+    var disqus_identifier = 'http:\/\/hugo.nazaretyan.com\/post\/changing-disk-in-md-raid-1\/';
+    var disqus_title = 'changing disk in MD RAID 1';
+    var disqus_url = 'http:\/\/hugo.nazaretyan.com\/post\/changing-disk-in-md-raid-1\/';
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+  </div>
+  
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-30504744-1', 'auto');
+    ga('send', 'pageview');
+    window.baseURL = "http:\/\/hugo.nazaretyan.com\/";
+  </script>
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.2/js/bootstrap.min.js"></script>
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/topojson/1.6.9/topojson.min.js"></script>
+  
+  
+  <script src="http://hugo.nazaretyan.com//js/App.js"></script>
+  
+</body>
+</html>

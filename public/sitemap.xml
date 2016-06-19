@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  
+  <url>
+    <loc>http://hugo.nazaretyan.com/</loc>
+    <lastmod>2016-06-19T11:08:40-04:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://hugo.nazaretyan.com/cv/</loc>
+    <lastmod>2016-06-19T11:08:40-04:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://hugo.nazaretyan.com/post/changing-disk-in-md-raid-1/</loc>
+    <lastmod>2014-06-02T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://hugo.nazaretyan.com/post/nginx-php-fpm-php-apc-mysql-wordpress-perfect-way-to-run-a-blog/</loc>
+    <lastmod>2013-09-27T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://hugo.nazaretyan.com/post/speedport-and-hp8500a-wifi-problem/</loc>
+    <lastmod>2012-05-10T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://hugo.nazaretyan.com/post/vps-as-solution-for-vpn-on-public-internet-access-points/</loc>
+    <lastmod>2010-11-21T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://hugo.nazaretyan.com/post/itunes-error-50-on-sync/</loc>
+    <lastmod>2010-11-18T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://hugo.nazaretyan.com/post/how-to-connect-windows-2008r2-to-windows-2003r2-domain-controller/</loc>
+    <lastmod>2010-05-03T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://hugo.nazaretyan.com/post/how-to-shutdown-how-if-init6-reboot-or-other-shutdown-method-do-not-work-because-of-hdd-or-other-system-problems/</loc>
+    <lastmod>2010-04-09T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://hugo.nazaretyan.com/post/how-to-change-hostname-in-linux-without-restart/</loc>
+    <lastmod>2010-04-09T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://hugo.nazaretyan.com/posts/dd-wrt-on-wrt54gl/</loc>
+    <lastmod>2010-03-31T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://hugo.nazaretyan.com/post/gvc-uninstall/</loc>
+    <lastmod>2010-02-26T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://hugo.nazaretyan.com/post/how-to-reset-password-on-linksys-wrt54gl-runing-openwrt/</loc>
+    <lastmod>2010-02-26T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://hugo.nazaretyan.com/post/configuring-tunneling-for-ipv6/</loc>
+    <lastmod>2010-01-26T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://hugo.nazaretyan.com/post/bind9-ipv6/</loc>
+    <lastmod>2010-01-25T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://hugo.nazaretyan.com/about/</loc>
+    <lastmod>2009-10-20T00:00:00+00:00</lastmod>
+  </url>
+  
+</urlset>

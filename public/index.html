@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article# website: http://ogp.me/ns/website#">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+    <meta name="description" content="">
+    <meta property="og:title" content="naut&#39;s blog">
+    
+    <meta property="og:type" content="website">
+    
+    <meta property="og:description" content="">
+    <meta property="og:url" content="http://hugo.nazaretyan.com/">
+    <meta property="og:site_name" content="naut&#39;s blog">
+    
+    <meta name="generator" content="Hugo 0.16" />
+    <title>naut&#39;s blog &middot; naut&#39;s blog</title>
+    
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
+    
+    <link rel="stylesheet" href="http://hugo.nazaretyan.com/css/style.css">
+    <link href="http://hugo.nazaretyan.com/index.xml" rel="alternate" type="application/rss+xml" title="naut&#39;s blog" />
+
+    
+    
+</head>
+<body>
+<nav class="navbar navbar-default navbar-fixed-top visible-xs">
+	<div class="container-fluid">
+		<div class="navbar-header">
+			<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+				<span class="sr-only">Toggle navigation</span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</button>
+			
+				<a class="navbar-brand" href="http://hugo.nazaretyan.com/">Moushegh Nazaretyan</a>
+			
+		</div>
+		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+			<ul class="nav navbar-nav">
+				
+				
+					<li><a href="http://hugo.nazaretyan.com/about/">About</a></li>
+				
+					<li><a href="http://hugo.nazaretyan.com/post/">Blog</a></li>
+				
+					<li><a href="http://hugo.nazaretyan.com/cv/">CV</a></li>
+				
+			</ul>
+		</div>
+	</div>
+</nav>
+<div class="container-fluid">
+	<div class="row">
+		<div id="menu" class="hidden-xs col-sm-4 col-md-3">
+	<div id="menu-content" class="vertical-align">
+		
+			<h1 class="text-center"><a href="http://hugo.nazaretyan.com/">Moushegh Nazaretyan</a></h1>
+		
+		
+		
+			<small class="text-center center-block">Linux Operations</small>
+		
+		
+		
+			<img id="profile-pic" src="http://hugo.nazaretyan.com//img/moushegh.jpg" alt="My Picture" class="img-circle center-block">
+		
+		<div id="social" class="text-center">
+			<a href="https://twitter.com/darthmaster"><i class="fa fa-twitter fa-2x"></i></a>
+			<a href="https://www.linkedin.com/in/moushegh"><i class="fa fa-linkedin fa-2x"></i></a>
+			<a href="https://github.com/moushegh"><i class="fa fa-github fa-2x"></i></a>
+			<a href="mailto:moushegh@nazaretyan.com"><i class="fa fa-envelope-o fa-2x"></i></a>
+		</div>
+		<div id="links" class="text-center">
+			
+			
+				<a href="http://hugo.nazaretyan.com/about/">About</a>
+			
+				<a href="http://hugo.nazaretyan.com/post/">Blog</a>
+			
+				<a href="http://hugo.nazaretyan.com/cv/">CV</a>
+			
+		</div>
+	</div>
+</div>
+		<div id="content" class="col-xs-12 col-sm-8 col-md-9">
+			<div class="row">
+				<div id="post" class="col-sm-offset-1 col-sm-10 col-md-10 col-lg-8">
+
+<header>
+	<h1>What I'm Thinking</h1>
+</header>
+
+
+	<div class="panel panel-default">
+	<div class="panel-header">
+		<h3>
+			<a href="http://hugo.nazaretyan.com/post/changing-disk-in-md-raid-1/">changing disk in MD RAID 1</a>
+			<br>
+			<small>
+				2 June 2014
+			</small>
+		</h3>
+	</div>
+	<div class="panel-body">
+		USED TOOLS apt-get update apt-get install hdparm gdisk parted DISABLING DISK BEFORE CHANGE (note that MD RAID mode must be 1, if it 0 you will kill system on this step) see which partition is binded to which MD device cat /proc/mdstat output must be like, where (F) indicates that partition is marked as faulty Personalities : [raid1] md3 : active raid1 sda4[2](F) sdb4[1] 1822442815 blocks super 1.2 [2/1] [_U] md2 : active raid1 sda3[2](F) sdb3[1] 1073740664 blocks super 1.2 [2/1] [_U] set partition as faulty for particular MD device mdadm --manage --set-faulty /dev/mdX /dev/sdX1 output must be similar to mdadm: set /dev/sda2 faulty in /dev/md1 repeat same step for all partitions for particular drive after removing all partitions from broken disk, mdstat output must be similar to Personalities : [raid1] md3 : active raid1 sdb4[1] 1822442815 blocks super 1.2 [2/1] [_U] md2 : active raid1 sdb3[1] 1073740664 blocks super 1.2 [2/1] [_U] md1 : active raid1 sdb2[1] 524276 blocks super 1.2 [2/1] [_U] md0 : active raid1 sdb1[1] 33553336 blocks super 1.2 [2/1] [_U] now since we set all pratitions of broken disk to faulty &#8211; we can remove them from md raid mdadm --manage /dev/mdX -r /dev/sdX1 output must be similar to mdadm: hot removed /dev/sdX1 from /dev/mdX repeat same setp for all partitions for particualr drive mdstat must look similar to this Personalities : [raid1] md3 : active raid1 sdb4[1] 1822442815 blocks super 1.2 [2/1] [_U] md2 : active raid1 sdb3[1] 1073740664 blocks super 1.2 [2/1] [_U] md1 : active raid1 sdb2[1] 524276 blocks super 1.2 [2/1] [_U] md0 : active raid1 sdb1[1] 33553336 blocks super 1.2 [2/1] [_U] unused devices: &lt;none&gt; if all steps are kept correct, you can now force linux to remove hard drive (in case you want to do HOT swap) echo 1 &gt; /sys/block/sdX/device/delete where X is actual broken drive letter dmsg output must be like this [383287.786029] sd 0:0:0:0: [sda] Stopping disk congratz you manage to remove disk without killing system &#8211; go smoke now.
+		
+			... <a href="http://hugo.nazaretyan.com/post/changing-disk-in-md-raid-1/">Read More</a>
+		
+	</div>
+	<div class="panel-footer">
+		
+		<small class="text-muted">
+			
+			
+				<a href="http://hugo.nazaretyan.com/tags/gdisk"><span class="label label-success">gdisk</span></a>
+			
+				<a href="http://hugo.nazaretyan.com/tags/how-to"><span class="label label-success">how to</span></a>
+			
+				<a href="http://hugo.nazaretyan.com/tags/linux-raid"><span class="label label-success">linux raid</span></a>
+			
+				<a href="http://hugo.nazaretyan.com/tags/mdraid"><span class="label label-success">mdraid</span></a>
+			
+				<a href="http://hugo.nazaretyan.com/tags/parted"><span class="label label-success">parted</span></a>
+			
+				<a href="http://hugo.nazaretyan.com/tags/raid"><span class="label label-success">raid</span></a>
+			
+				<a href="http://hugo.nazaretyan.com/tags/software-raid"><span class="label label-success">software raid</span></a>
+			
+		</small>
+		
+	</div>
+</div>
+
+
+	<div class="panel panel-default">
+	<div class="panel-header">
+		<h3>
+			<a href="http://hugo.nazaretyan.com/post/nginx-php-fpm-php-apc-mysql-wordpress-perfect-way-to-run-a-blog/">nginx &#43; php-fpm &#43; php-apc &#43; mysql &#43; wordpress perfect way to run a blog</a>
+			<br>
+			<small>
+				27 September 2013
+			</small>
+		</h3>
+	</div>
+	<div class="panel-body">
+		<p>i recently moved from apache2 to nginx on all my web servers. and feeling happy about that.</p>
+
+<p>i would like to share configurations since , before and after the move i did load test on my blog and difference on performance was amazing.</p>
+
+		
+			... <a href="http://hugo.nazaretyan.com/post/nginx-php-fpm-php-apc-mysql-wordpress-perfect-way-to-run-a-blog/">Read More</a>
+		
+	</div>
+	<div class="panel-footer">
+		
+		<small class="text-muted">
+			
+			
+				<a href="http://hugo.nazaretyan.com/tags/debian"><span class="label label-success">debian</span></a>
+			
+				<a href="http://hugo.nazaretyan.com/tags/linux"><span class="label label-success">Linux</span></a>
+			
+				<a href="http://hugo.nazaretyan.com/tags/nginx"><span class="label label-success">nginx</span></a>
+			
+				<a href="http://hugo.nazaretyan.com/tags/php-fpm"><span class="label label-success">php-fpm</span></a>
+			
+				<a href="http://hugo.nazaretyan.com/tags/wp-nginx"><span class="label label-success">wp nginx</span></a>
+			
+		</small>
+		
+	</div>
+</div>
+
+
+	<div class="panel panel-default">
+	<div class="panel-header">
+		<h3>
+			<a href="http://hugo.nazaretyan.com/post/speedport-and-hp8500a-wifi-problem/">speedport  and HP8500A wifi problem</a>
+			<br>
+			<small>
+				10 May 2012
+			</small>
+		</h3>
+	</div>
+	<div class="panel-body">
+		in case of somebody will have a issues on connecting multifunction all-in-one HP officejet 8500A to Speedport W 723V typ b, all you need to do its to downgrade the firmware from your router, old firmware can be downloaded from T-com site. only one that works its 1.11.000 (actual one is 1.24.000) spend today 3 hours until found solution , hope somebody who will read this would spend less
+		
+	</div>
+	<div class="panel-footer">
+		
+		<small class="text-muted">
+			
+			
+				<a href="http://hugo.nazaretyan.com/tags/hp-8500a"><span class="label label-success">HP 8500A</span></a>
+			
+				<a href="http://hugo.nazaretyan.com/tags/speedport"><span class="label label-success">speedport</span></a>
+			
+				<a href="http://hugo.nazaretyan.com/tags/w-723v"><span class="label label-success">W 723V</span></a>
+			
+				<a href="http://hugo.nazaretyan.com/tags/wifi"><span class="label label-success">wifi</span></a>
+			
+		</small>
+		
+	</div>
+</div>
+
+
+	<div class="panel panel-default">
+	<div class="panel-header">
+		<h3>
+			<a href="http://hugo.nazaretyan.com/post/vps-as-solution-for-vpn-on-public-internet-access-points/">vps as solution for VPN on public internet access points</a>
+			<br>
+			<small>
+				21 November 2010
+			</small>
+		</h3>
+	</div>
+	<div class="panel-body">
+		<p>i think most that i want to write on this post is already tolden  in head  <img src="http://i1.wp.com/nazaretyan.com/wp-includes/images/smilies/icon_smile.gif?w=625" alt=":)" class="wp-smiley" data-recalc-dims="1" />but anyway</p>
+
+<p>most people using laptops with &#8220;free&#8221; access points on fastfood points/ airports and other places.</p>
+
+<p>most of this points have a limited traffic access to internet with lot of port filters.</p>
+
+<p>but as a usual user with unsual ports  <img src="http://i1.wp.com/nazaretyan.com/wp-includes/images/smilies/icon_smile.gif?w=625" alt=":)" class="wp-smiley" data-recalc-dims="1" />i want always to access everyting from everywhere with same quality as from home</p>
+
+<p>after searching in internet for solution trying my-freedom and other servies that giving only non full speed access i become to idea that its easier to have own VPN server running somewhere in cheep or almost free  hosting.</p>
+
+		
+			... <a href="http://hugo.nazaretyan.com/post/vps-as-solution-for-vpn-on-public-internet-access-points/">Read More</a>
+		
+	</div>
+	<div class="panel-footer">
+		
+		<small class="text-muted">
+			
+			
+				<a href="http://hugo.nazaretyan.com/tags/amazon-aws"><span class="label label-success">amazon aws</span></a>
+			
+				<a href="http://hugo.nazaretyan.com/tags/free-tunnel"><span class="label label-success">free tunnel</span></a>
+			
+				<a href="http://hugo.nazaretyan.com/tags/linux"><span class="label label-success">Linux</span></a>
+			
+				<a href="http://hugo.nazaretyan.com/tags/openvpn"><span class="label label-success">OpenVPN</span></a>
+			
+				<a href="http://hugo.nazaretyan.com/tags/vpn"><span class="label label-success">vpn</span></a>
+			
+		</small>
+		
+	</div>
+</div>
+
+
+	<div class="panel panel-default">
+	<div class="panel-header">
+		<h3>
+			<a href="http://hugo.nazaretyan.com/post/itunes-error-50-on-sync/">itunes error -50 on sync</a>
+			<br>
+			<small>
+				18 November 2010
+			</small>
+		</h3>
+	</div>
+	<div class="panel-body">
+		heya few days ago got the issue with SYNC my iPhone with itunes on windows7, from 4 steps of sync its stops on 3 one and told me that there is error -50 after searching a lot on brave apple how to and speaking with customer care i understend that even they cant tell anything regarding this issue. and i start testings. main issue was on picture sync. after searching and reading blogs, i find out that iphone/ipad/ipod is not syncing your images but making some CACHE of them and syncing cached files only.
+		
+			... <a href="http://hugo.nazaretyan.com/post/itunes-error-50-on-sync/">Read More</a>
+		
+	</div>
+	<div class="panel-footer">
+		
+		<small class="text-muted">
+			
+			
+				<a href="http://hugo.nazaretyan.com/tags/ipad"><span class="label label-success">ipad</span></a>
+			
+				<a href="http://hugo.nazaretyan.com/tags/iphone"><span class="label label-success">iphone</span></a>
+			
+				<a href="http://hugo.nazaretyan.com/tags/ipod"><span class="label label-success">ipod</span></a>
+			
+				<a href="http://hugo.nazaretyan.com/tags/itunes--50-error"><span class="label label-success">itunes -50 error</span></a>
+			
+				<a href="http://hugo.nazaretyan.com/tags/sync-error"><span class="label label-success">sync error</span></a>
+			
+		</small>
+		
+	</div>
+</div>
+
+
+	<div class="panel panel-default">
+	<div class="panel-header">
+		<h3>
+			<a href="http://hugo.nazaretyan.com/post/how-to-connect-windows-2008r2-to-windows-2003r2-domain-controller/">how to connect windows 2008R2 to windows 2003R2 Domain controller</a>
+			<br>
+			<small>
+				3 May 2010
+			</small>
+		</h3>
+	</div>
+	<div class="panel-body">
+		<p>Few days ago i get a chance to configure new windows 2008R2 on already working infrastructure with windows2003R2,</p>
+
+<p>main goad was to create RODC (read only domain controller) within AD.</p>
+
+<p>after starting the project i get few real interesting situations that want to share.</p>
+
+		
+			... <a href="http://hugo.nazaretyan.com/post/how-to-connect-windows-2008r2-to-windows-2003r2-domain-controller/">Read More</a>
+		
+	</div>
+	<div class="panel-footer">
+		
+		<small class="text-muted">
+			
+			
+				<a href="http://hugo.nazaretyan.com/tags/ad"><span class="label label-success">ad</span></a>
+			
+				<a href="http://hugo.nazaretyan.com/tags/domain-controller"><span class="label label-success">domain controller</span></a>
+			
+				<a href="http://hugo.nazaretyan.com/tags/rodc"><span class="label label-success">RODC</span></a>
+			
+				<a href="http://hugo.nazaretyan.com/tags/windows-2003r2"><span class="label label-success">windows 2003R2</span></a>
+			
+				<a href="http://hugo.nazaretyan.com/tags/windows-2008r2"><span class="label label-success">windows 2008R2</span></a>
+			
+		</small>
+		
+	</div>
+</div>
+
+
+	<div class="panel panel-default">
+	<div class="panel-header">
+		<h3>
+			<a href="http://hugo.nazaretyan.com/post/how-to-change-hostname-in-linux-without-restart/">how to change hostname in linux without restart</a>
+			<br>
+			<small>
+				9 April 2010
+			</small>
+		</h3>
+	</div>
+	<div class="panel-body">
+		its quite simple .. you need just to echo new hostname into /proc/sys/kernel/hostname for exmaple &#8211; echo $NEWHOSTNAME &gt; /proc/sys/kernel/hostname logoff and login again to host but remeber to add the new hostname to /etc/hosts as well
+		
+	</div>
+	<div class="panel-footer">
+		
+		<small class="text-muted">
+			
+			
+				<a href="http://hugo.nazaretyan.com/tags/linux"><span class="label label-success">Linux</span></a>
+			
+		</small>
+		
+	</div>
+</div>
+
+
+	<div class="panel panel-default">
+	<div class="panel-header">
+		<h3>
+			<a href="http://hugo.nazaretyan.com/post/how-to-shutdown-how-if-init6-reboot-or-other-shutdown-method-do-not-work-because-of-hdd-or-other-system-problems/">How to shutdown how if init6, reboot or other shutdown method do not work because of hdd, or other system problems</a>
+			<br>
+			<small>
+				9 April 2010
+			</small>
+		</h3>
+	</div>
+	<div class="panel-body">
+		<p>If you have ever had a hard drive fail on a remote server you may remember the feeling you had after trying to issue the following commands:</p>
+
+		
+			... <a href="http://hugo.nazaretyan.com/post/how-to-shutdown-how-if-init6-reboot-or-other-shutdown-method-do-not-work-because-of-hdd-or-other-system-problems/">Read More</a>
+		
+	</div>
+	<div class="panel-footer">
+		
+		<small class="text-muted">
+			
+			
+				<a href="http://hugo.nazaretyan.com/tags/debain"><span class="label label-success">debain</span></a>
+			
+				<a href="http://hugo.nazaretyan.com/tags/it-support"><span class="label label-success">IT support</span></a>
+			
+				<a href="http://hugo.nazaretyan.com/tags/linux"><span class="label label-success">Linux</span></a>
+			
+				<a href="http://hugo.nazaretyan.com/tags/reset"><span class="label label-success">reset</span></a>
+			
+				<a href="http://hugo.nazaretyan.com/tags/restart"><span class="label label-success">restart</span></a>
+			
+		</small>
+		
+	</div>
+</div>
+
+
+	<div class="panel panel-default">
+	<div class="panel-header">
+		<h3>
+			<a href="http://hugo.nazaretyan.com/posts/dd-wrt-on-wrt54gl/">DD-WRT on WRT54GL</a>
+			<br>
+			<small>
+				31 March 2010
+			</small>
+		</h3>
+	</div>
+	<div class="panel-body">
+		tried to install last firmware 24sp2 from 10/10/09 on my Linksys WRT54GL, from start everything looks cool, system get update in 120 second after restart all old config was on place and put back the device to network, from few hours i find out that my cisco 2660 is losing the packages in the network and Sonicwall gateway reporting spoofing attacks. i done like everything that i can, change the switch , sonicwall port, disconnect all employers, but nothing helps.
+		
+			... <a href="http://hugo.nazaretyan.com/posts/dd-wrt-on-wrt54gl/">Read More</a>
+		
+	</div>
+	<div class="panel-footer">
+		
+		<small class="text-muted">
+			
+			
+				<a href="http://hugo.nazaretyan.com/tags/cisco"><span class="label label-success">Cisco</span></a>
+			
+				<a href="http://hugo.nazaretyan.com/tags/linsys"><span class="label label-success">Linsys</span></a>
+			
+				<a href="http://hugo.nazaretyan.com/tags/linux"><span class="label label-success">Linux</span></a>
+			
+				<a href="http://hugo.nazaretyan.com/tags/openwrt"><span class="label label-success">OpenWRT</span></a>
+			
+				<a href="http://hugo.nazaretyan.com/tags/wrt"><span class="label label-success">WRT</span></a>
+			
+		</small>
+		
+	</div>
+</div>
+
+
+	<div class="panel panel-default">
+	<div class="panel-header">
+		<h3>
+			<a href="http://hugo.nazaretyan.com/post/how-to-reset-password-on-linksys-wrt54gl-runing-openwrt/">how to reset password on Linksys WRT54GL running OpenWRT</a>
+			<br>
+			<small>
+				26 February 2010
+			</small>
+		</h3>
+	</div>
+	<div class="panel-body">
+		<p>post is mainly for people who just find out that cant remember the root password from OpenWRT operation system thats running on their Linksys WRT54GL.</p>
+
+<p>what you need to do  <img src="http://i1.wp.com/nazaretyan.com/wp-includes/images/smilies/icon_smile.gif?w=625" alt=":)" class="wp-smiley" data-recalc-dims="1" />?</p>
+
+		
+			... <a href="http://hugo.nazaretyan.com/post/how-to-reset-password-on-linksys-wrt54gl-runing-openwrt/">Read More</a>
+		
+	</div>
+	<div class="panel-footer">
+		
+		<small class="text-muted">
+			
+			
+				<a href="http://hugo.nazaretyan.com/tags/linksys"><span class="label label-success">linksys</span></a>
+			
+				<a href="http://hugo.nazaretyan.com/tags/linux"><span class="label label-success">Linux</span></a>
+			
+				<a href="http://hugo.nazaretyan.com/tags/openwrt"><span class="label label-success">OpenWRT</span></a>
+			
+				<a href="http://hugo.nazaretyan.com/tags/root"><span class="label label-success">root</span></a>
+			
+				<a href="http://hugo.nazaretyan.com/tags/router"><span class="label label-success">router</span></a>
+			
+		</small>
+		
+	</div>
+</div>
+
+
+
+<div class="text-center center-block">
+	
+    
+    <ul class="pagination">
+        
+        <li>
+            <a href="/" aria-label="First"><span aria-hidden="true">&laquo;&laquo;</span></a>
+        </li>
+        
+        <li
+        class="disabled">
+        <a href="" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
+        </li>
+        
+        <li
+        class="active"><a href="/">1</a></li>
+        
+        <li
+        ><a href="/page/2/">2</a></li>
+        
+        <li
+        >
+        <a href="/page/2/" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>
+        </li>
+        
+        <li>
+            <a href="/page/2/" aria-label="Last"><span aria-hidden="true">&raquo;&raquo;</span></a>
+        </li>
+        
+    </ul>
+    
+</div>
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+  </div>
+  
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-30504744-1', 'auto');
+    ga('send', 'pageview');
+    window.baseURL = "http:\/\/hugo.nazaretyan.com\/";
+  </script>
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.2/js/bootstrap.min.js"></script>
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/topojson/1.6.9/topojson.min.js"></script>
+  
+  
+  <script src="http://hugo.nazaretyan.com//js/App.js"></script>
+  
+</body>
+</html>

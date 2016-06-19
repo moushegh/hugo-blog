@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Iproute2 on naut&#39;s blog</title>
+    <link>http://hugo.nazaretyan.com/tags/iproute2/</link>
+    <description>Recent content in Iproute2 on naut&#39;s blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <managingEditor>moushegh@gmail.com (Moushegh Nazaretyan)</managingEditor>
+    <webMaster>moushegh@gmail.com (Moushegh Nazaretyan)</webMaster>
+    <lastBuildDate>Tue, 26 Jan 2010 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://hugo.nazaretyan.com/tags/iproute2/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>configuring tunneling for ipv6</title>
+      <link>http://hugo.nazaretyan.com/post/configuring-tunneling-for-ipv6/</link>
+      <pubDate>Tue, 26 Jan 2010 00:00:00 +0000</pubDate>
+      <author>moushegh@gmail.com (Moushegh Nazaretyan)</author>
+      <guid>http://hugo.nazaretyan.com/post/configuring-tunneling-for-ipv6/</guid>
+      <description>&lt;p&gt;hey &lt;img src=&#34;http://i1.wp.com/nazaretyan.com/wp-includes/images/smilies/icon_smile.gif?w=625&#34; alt=&#34;:)&#34; class=&#34;wp-smiley&#34; data-recalc-dims=&#34;1&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;again thanks for he.net for this wonderful appartunity to use IPv6 without own zone &amp;#8230; blablabla &lt;img src=&#34;http://i1.wp.com/nazaretyan.com/wp-includes/images/smilies/icon_smile.gif?w=625&#34; alt=&#34;:)&#34; class=&#34;wp-smiley&#34; data-recalc-dims=&#34;1&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;and here is some examples how to configure IPv6 tunnel.&lt;/p&gt;
+
+&lt;p&gt;lats start.&lt;/p&gt;
+
+&lt;p&gt;1.&lt;/p&gt;
+
+&lt;p&gt;&lt;span style=&#34;color: #ff0000;&#34;&gt;Linux with iproute &lt;/span&gt;&lt;/p&gt;
+
+&lt;pre&gt;modprobe ipv6
+ip tunnel add new-ipv6 mode sit remote IP_ADDRESS local IP_ADDRESS ttl 255
+ip link set new-ipv6 up
+ip addr add IPv6_ADDRESS dev new-ipv6
+ip route add ::/0 dev new-ipv6
+ip -f inet6 addr
+
+2.linux with net-tools
+
+
+
+&lt;pre&gt;ifconfig sit0 up
+ifconfig sit0 inet6 tunnel ::IPv4_LIKE_IPv6_ADDRESS
+ifconfig sit1 up
+ifconfig sit1 inet6 add IPv6_ADDRESS
+route -A inet6 add ::/0 dev sit1&lt;/pre&gt;
+
+&lt;p&gt;
+  3.Sun Solaris
+&lt;/p&gt;
+
+&lt;pre&gt;ifconfig ip.tun0 inet6 plumb
+ifconfig ip.tun0 inet6 tsrc IP_LOCAL tdst IP_REMOTE up
+ifconfig ip.tun0 inet6 addif TUN_IPv6_ADDRESS_LOCAL TUN_IPv6_ADDRESS_REMOTE up
+route add -inet6 default REMOTE_TUN_IPv6_ADDRESS&lt;/pre&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

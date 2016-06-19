@@ -1,0 +1,948 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Posts on naut&#39;s blog</title>
+    <link>http://hugo.nazaretyan.com/post/</link>
+    <description>Recent content in Posts on naut&#39;s blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <managingEditor>moushegh@gmail.com (Moushegh Nazaretyan)</managingEditor>
+    <webMaster>moushegh@gmail.com (Moushegh Nazaretyan)</webMaster>
+    <lastBuildDate>Mon, 02 Jun 2014 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://hugo.nazaretyan.com/post/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>changing disk in MD RAID 1</title>
+      <link>http://hugo.nazaretyan.com/post/changing-disk-in-md-raid-1/</link>
+      <pubDate>Mon, 02 Jun 2014 00:00:00 +0000</pubDate>
+      <author>moushegh@gmail.com (Moushegh Nazaretyan)</author>
+      <guid>http://hugo.nazaretyan.com/post/changing-disk-in-md-raid-1/</guid>
+      <description>
+
+&lt;h1 id=&#34;span-id-used-tools-class-mw-headline-used-tools-span&#34;&gt;&lt;span id=&#34;USED_TOOLS&#34; class=&#34;mw-headline&#34;&gt;USED TOOLS &lt;/span&gt;&lt;/h1&gt;
+
+&lt;pre&gt;apt-get update
+apt-get install hdparm gdisk parted
+&lt;/pre&gt;
+
+&lt;h1 id=&#34;span-id-disabling-disk-before-change-class-mw-headline-disabling-disk-before-change-span&#34;&gt; &lt;span id=&#34;DISABLING_DISK_BEFORE_CHANGE&#34; class=&#34;mw-headline&#34;&gt;DISABLING DISK BEFORE CHANGE &lt;/span&gt;&lt;/h1&gt;
+
+&lt;pre&gt;&lt;span style=&#34;color: #ff0000;&#34;&gt;(note that MD RAID mode must be 1, if it 0 you will kill system on this step)
+&lt;/span&gt;&lt;/pre&gt;
+
+&lt;p&gt;see which partition is binded to which MD device&lt;/p&gt;
+
+&lt;pre&gt;cat /proc/mdstat  
+  
+&lt;/pre&gt;
+
+&lt;p&gt;output must be like, where (F) indicates that partition is marked as faulty&lt;/p&gt;
+
+&lt;pre&gt;Personalities : [raid1]
+ md3 : active raid1 sda4[2](F) sdb4[1]
+     1822442815 blocks super 1.2 [2/1] [_U]
+ md2 : active raid1 sda3[2](F) sdb3[1]
+     1073740664 blocks super 1.2 [2/1] [_U]
+&lt;/pre&gt;
+
+&lt;p&gt;set partition as faulty for particular MD device&lt;/p&gt;
+
+&lt;pre&gt;mdadm --manage --set-faulty /dev/mdX /dev/sdX1
+&lt;/pre&gt;
+
+&lt;p&gt;output must be similar to&lt;/p&gt;
+
+&lt;pre&gt;mdadm: set /dev/sda2 faulty in /dev/md1
+&lt;/pre&gt;
+
+&lt;p&gt;repeat same step for all partitions for particular drive&lt;/p&gt;
+
+&lt;p&gt;after removing all partitions from broken disk, mdstat output must be similar to&lt;/p&gt;
+
+&lt;pre&gt;Personalities : [raid1]
+md3 : active raid1 sdb4[1]
+     1822442815 blocks super 1.2 [2/1] [_U]
+md2 : active raid1 sdb3[1]
+     1073740664 blocks super 1.2 [2/1] [_U]
+md1 : active raid1 sdb2[1]
+     524276 blocks super 1.2 [2/1] [_U]
+md0 : active raid1 sdb1[1]
+     33553336 blocks super 1.2 [2/1] [_U]
+&lt;/pre&gt;
+
+&lt;p&gt;now since we set all pratitions of broken disk to faulty &amp;#8211; we can remove them from md raid&lt;/p&gt;
+
+&lt;pre&gt;mdadm --manage /dev/mdX -r /dev/sdX1
+&lt;/pre&gt;
+
+&lt;p&gt;output must be similar to&lt;/p&gt;
+
+&lt;pre&gt;mdadm: hot removed /dev/sdX1 from /dev/mdX
+&lt;/pre&gt;
+
+&lt;p&gt;repeat same setp for all partitions for particualr drive&lt;/p&gt;
+
+&lt;p&gt;mdstat must look similar to this&lt;/p&gt;
+
+&lt;pre&gt;Personalities : [raid1]
+md3 : active raid1 sdb4[1]
+     1822442815 blocks super 1.2 [2/1] [_U]
+md2 : active raid1 sdb3[1]
+     1073740664 blocks super 1.2 [2/1] [_U]
+md1 : active raid1 sdb2[1]
+     524276 blocks super 1.2 [2/1] [_U]
+md0 : active raid1 sdb1[1]
+     33553336 blocks super 1.2 [2/1] [_U]
+unused devices: &amp;lt;none&amp;gt;
+&lt;/pre&gt;
+
+&lt;p&gt;if all steps are kept correct, you can now force linux to remove hard drive (in case you want to do HOT swap)&lt;/p&gt;
+
+&lt;pre&gt;echo 1 &amp;gt; /sys/block/sdX/device/delete 
+&lt;/pre&gt;
+
+&lt;p&gt;where X is actual broken drive letter&lt;/p&gt;
+
+&lt;pre&gt;dmsg
+&lt;/pre&gt;
+
+&lt;p&gt;output must be like this&lt;/p&gt;
+
+&lt;pre&gt;[383287.786029] sd 0:0:0:0: [sda] Stopping disk
+&lt;/pre&gt;
+
+&lt;p&gt;congratz you manage to remove disk without killing system &amp;#8211; go smoke now.&lt;/p&gt;
+
+&lt;h1 id=&#34;span-id-adding-new-disk-hot-swap-scenario-28without-reboot-29-class-mw-headline-adding-new-disk-hot-swap-scenario-without-reboot-span&#34;&gt;&lt;span id=&#34;ADDING_NEW_DISK_HOT_SWAP_SCENARIO_.28without_reboot.29&#34; class=&#34;mw-headline&#34;&gt;ADDING NEW DISK HOT SWAP SCENARIO (without reboot)&lt;/span&gt;&lt;/h1&gt;
+
+&lt;p&gt;in case HDD was HOT swaped (without system restart) you need to force system to rescan controller and detect new drive&lt;/p&gt;
+
+&lt;pre&gt;echo &#34;0 0 0&#34; &amp;gt;/sys/class/scsi_host/host&amp;lt;n&amp;gt;/scan
+&lt;/pre&gt;
+
+&lt;p&gt;where &lt;n&gt; is host controller number&lt;/p&gt;
+
+&lt;pre&gt;[383444.439888] ata1: hard resetting link
+[383444.756112] ata1: SATA link up 3.0 Gbps (SStatus 123 SControl 300)
+[383445.042099] ata1.00: ATA-8: ST3000DM001-9YN166, CC4C, max UDMA/133
+[383445.042139] ata1.00: 5860533168 sectors, multi 0: LBA48 NCQ (depth 31/32), AA
+[383445.072228] ata1.00: configured for UDMA/133
+[383445.072270] ata1: EH complete
+[383445.072467] scsi 0:0:0:0: Direct-Access     ATA      ST3000DM001-9YN1 CC4C PQ: 0 ANSI: 5
+[383445.072834] sd 0:0:0:0: [sda] 5860533168 512-byte logical blocks: (3.00 TB/2.72 TiB)
+[383445.072846] sd 0:0:0:0: Attached scsi generic sg0 type 0
+[383445.072924] sd 0:0:0:0: [sda] 4096-byte physical blocks
+[383445.073364] sd 0:0:0:0: [sda] Write Protect is off
+[383445.073402] sd 0:0:0:0: [sda] Mode Sense: 00 3a 00 00
+[383445.073587] sd 0:0:0:0: [sda] Write cache: enabled, read cache: enabled, doesn&#39;t support DPO or FUA
+[383445.122528]  sda: sda1 sda2 sda3 sda4 sda5
+[383445.124355] sd 0:0:0:0: [sda] Attached SCSI disk
+&lt;/pre&gt;
+
+&lt;p&gt;so now linux found your new replaced hard drive and its time for partitioning.&lt;/p&gt;
+
+&lt;h1 id=&#34;span-id-adding-new-disk-cold-swap-scenario-28with-reboot-29-class-mw-headline-adding-new-disk-cold-swap-scenario-with-reboot-span&#34;&gt; &lt;span id=&#34;ADDING_NEW_DISK_COLD_SWAP_SCENARIO_.28with_reboot.29&#34; class=&#34;mw-headline&#34;&gt;ADDING NEW DISK COLD SWAP SCENARIO (with reboot)&lt;/span&gt;&lt;/h1&gt;
+
+&lt;p&gt;service providers like &amp;#8220;hetzner&amp;#8221; are not supporting hot swap, so they always need to reboot system in order to change HDD,since we deleted hdd from system. its now safe to shutdown and ask provider to swap disk. after swap they will switch on system back. disk will get same drive letter as old &amp;#8220;broken&amp;#8221; one.&lt;/p&gt;
+
+&lt;h1 id=&#34;span-id-preparing-disk-for-md-raid-membership-class-mw-headline-preparing-disk-for-md-raid-membership-span&#34;&gt;&lt;span id=&#34;PREPARING_DISK_FOR_MD_RAID_MEMBERSHIP&#34; class=&#34;mw-headline&#34;&gt;PREPARING DISK FOR MD RAID MEMBERSHIP&lt;/span&gt;&lt;/h1&gt;
+
+&lt;p&gt;if disk is bigger then 2TB &amp;#8211; it must use GPT. where Y is drive letter for new changed HDD&lt;/p&gt;
+
+&lt;pre&gt;parted /dev/sdY
+mklabel GPT
+yes
+quit
+&lt;/pre&gt;
+
+&lt;p&gt;we will need to recreate same partition table on newly chagned drive (VERY VERY CAREFULY)&lt;/p&gt;
+
+&lt;pre&gt;sgdisk -R=/dev/sdX /dev/sdY
+&lt;/pre&gt;
+
+&lt;p&gt;where X is exisiting drive in MD array and Y is new changed drive&lt;/p&gt;
+
+&lt;pre&gt;sgdisk -G /dev/sdY
+&lt;/pre&gt;
+
+&lt;p&gt;The second command randomizes the GUID on the disk and all the partitions (MUST for uninqness)&lt;/p&gt;
+
+&lt;p&gt;if everything went without errors on this stage, you are rady to add disk back to MD RAID.&lt;/p&gt;
+
+&lt;h1 id=&#34;span-id-adding-disk-back-to-running-mdraid-class-mw-headline-adding-disk-back-to-running-mdraid-span&#34;&gt;&lt;span id=&#34;ADDING_DISK_BACK_TO_RUNNING_MDRAID&#34; class=&#34;mw-headline&#34;&gt;ADDING DISK BACK TO RUNNING MDRAID&lt;/span&gt;&lt;/h1&gt;
+
+&lt;p&gt;to see which partition belongs to which MD device&lt;/p&gt;
+
+&lt;pre&gt;watch cat /proc/mdstat
+&lt;/pre&gt;
+
+&lt;p&gt;then&lt;/p&gt;
+
+&lt;pre&gt;mdadm --manage /dev/mdX -a /dev/sdX1
+&lt;/pre&gt;
+
+&lt;p&gt;output&lt;/p&gt;
+
+&lt;pre&gt;mdadm: added /dev/sdX1
+&lt;/pre&gt;
+
+&lt;p&gt;MDRAID will start to sync drives in order to have data on both drives in parallel, you can follow it by&lt;/p&gt;
+
+&lt;pre&gt;cat /proc/mdstat
+&lt;/pre&gt;
+
+&lt;p&gt;output&lt;/p&gt;
+
+&lt;pre&gt;Personalities : [raid1]
+md3 : active raid1 sda4[2] sdb4[1]
+     1822442815 blocks super 1.2 [2/1] [_U]
+     [===========&amp;gt;.........]  recovery = 57.2% (1043526976/1822442815) finish=211.8min speed=61278K/sec
+md2 : active raid1 sda3[2] sdb3[1]
+     1073740664 blocks super 1.2 [2/1] [_U]
+       resync=DELAYED
+md1 : active raid1 sda2[2] sdb2[1]
+     524276 blocks super 1.2 [2/1] [_U]
+       resync=DELAYED
+md0 : active raid1 sda1[2] sdb1[1]
+     33553336 blocks super 1.2 [2/1] [_U]
+       resync=DELAYED
+unused devices: &amp;lt;none&amp;gt;
+&lt;/pre&gt;
+
+&lt;p&gt;where &amp;#8220;resync=DELAYED&amp;#8221; means that sync is in &amp;#8220;wait state&amp;#8221; &amp;#8211; only 1 MD device can sync in same time.&lt;/p&gt;
+
+&lt;h1 id=&#34;span-id-adding-boot-loader-class-mw-headline-adding-boot-loader-span&#34;&gt; &lt;span id=&#34;ADDING_BOOT_LOADER&#34; class=&#34;mw-headline&#34;&gt;ADDING BOOT LOADER&lt;/span&gt;&lt;/h1&gt;
+
+&lt;p&gt;after all the steps you need to tell grub that new disk is bootlbe also&lt;/p&gt;
+
+&lt;pre&gt;grub-install /dev/sdY
+&lt;/pre&gt;
+
+&lt;p&gt;output&lt;/p&gt;
+
+&lt;pre&gt;Installation finished. No error reported
+&lt;/pre&gt;
+
+&lt;p&gt;have fun.&lt;/p&gt;
+
+&lt;div class=&#34;sharedaddy sd-sharing-enabled&#34;&gt;
+  &lt;div class=&#34;robots-nocontent sd-block sd-social sd-social-icon-text sd-sharing&#34;&gt;
+    &lt;h3 class=&#34;sd-title&#34;&gt;
+      Share this:
+    &lt;/h3&gt;
+    
+    &lt;div class=&#34;sd-content&#34;&gt;
+      &lt;ul&gt;
+        &lt;li&gt;
+          &lt;a href=&#34;#&#34; class=&#34;sharing-anchor sd-button share-more&#34;&gt;&lt;span&gt;Share&lt;/span&gt;&lt;/a&gt;
+        &lt;/li&gt;
+        &lt;li class=&#34;share-end&#34;&gt;
+        &lt;/li&gt;
+      &lt;/ul&gt;
+      
+      &lt;div class=&#34;sharing-hidden&#34;&gt;
+        &lt;div class=&#34;inner&#34; style=&#34;display: none;&#34;&gt;
+          &lt;ul&gt;
+            &lt;li class=&#34;share-email&#34;&gt;
+              &lt;a rel=&#34;nofollow&#34; data-shared=&#34;&#34; class=&#34;share-email sd-button share-icon&#34; href=&#34;https://nazaretyan.com/changing-disk-in-md-raid-1/?share=email&#34; title=&#34;Click to email this to a friend&#34;&gt;&lt;span&gt;Email&lt;/span&gt;&lt;/a&gt;
+            &lt;/li&gt;
+            &lt;li class=&#34;share-facebook&#34;&gt;
+              &lt;a rel=&#34;nofollow&#34; data-shared=&#34;sharing-facebook-259&#34; class=&#34;share-facebook sd-button share-icon&#34; href=&#34;https://nazaretyan.com/changing-disk-in-md-raid-1/?share=facebook&#34; title=&#34;Share on Facebook&#34;&gt;&lt;span&gt;Facebook&lt;/span&gt;&lt;/a&gt;
+            &lt;/li&gt;
+            &lt;li class=&#34;share-end&#34;&gt;
+            &lt;/li&gt;
+            &lt;li class=&#34;share-reddit&#34;&gt;
+              &lt;a rel=&#34;nofollow&#34; data-shared=&#34;&#34; class=&#34;share-reddit sd-button share-icon&#34; href=&#34;https://nazaretyan.com/changing-disk-in-md-raid-1/?share=reddit&#34; title=&#34;Click to share on Reddit&#34;&gt;&lt;span&gt;Reddit&lt;/span&gt;&lt;/a&gt;
+            &lt;/li&gt;
+            &lt;li class=&#34;share-twitter&#34;&gt;
+              &lt;a rel=&#34;nofollow&#34; data-shared=&#34;sharing-twitter-259&#34; class=&#34;share-twitter sd-button share-icon&#34; href=&#34;https://nazaretyan.com/changing-disk-in-md-raid-1/?share=twitter&#34; title=&#34;Click to share on Twitter&#34;&gt;&lt;span&gt;Twitter&lt;/span&gt;&lt;/a&gt;
+            &lt;/li&gt;
+            &lt;li class=&#34;share-end&#34;&gt;
+            &lt;/li&gt;
+            &lt;li class=&#34;share-tumblr&#34;&gt;
+              &lt;a rel=&#34;nofollow&#34; data-shared=&#34;&#34; class=&#34;share-tumblr sd-button share-icon&#34; href=&#34;https://nazaretyan.com/changing-disk-in-md-raid-1/?share=tumblr&#34; title=&#34;Click to share on Tumblr&#34;&gt;&lt;span&gt;Tumblr&lt;/span&gt;&lt;/a&gt;
+            &lt;/li&gt;
+            &lt;li class=&#34;share-linkedin&#34;&gt;
+              &lt;a rel=&#34;nofollow&#34; data-shared=&#34;sharing-linkedin-259&#34; class=&#34;share-linkedin sd-button share-icon&#34; href=&#34;https://nazaretyan.com/changing-disk-in-md-raid-1/?share=linkedin&#34; title=&#34;Click to share on LinkedIn&#34;&gt;&lt;span&gt;LinkedIn&lt;/span&gt;&lt;/a&gt;
+            &lt;/li&gt;
+            &lt;li class=&#34;share-end&#34;&gt;
+            &lt;/li&gt;
+            &lt;li class=&#34;share-stumbleupon&#34;&gt;
+              &lt;a rel=&#34;nofollow&#34; data-shared=&#34;&#34; class=&#34;share-stumbleupon sd-button share-icon&#34; href=&#34;https://nazaretyan.com/changing-disk-in-md-raid-1/?share=stumbleupon&#34; title=&#34;Click to share on StumbleUpon&#34;&gt;&lt;span&gt;StumbleUpon&lt;/span&gt;&lt;/a&gt;
+            &lt;/li&gt;
+            &lt;li class=&#34;share-pinterest&#34;&gt;
+              &lt;a rel=&#34;nofollow&#34; data-shared=&#34;sharing-pinterest-259&#34; class=&#34;share-pinterest sd-button share-icon&#34; href=&#34;https://nazaretyan.com/changing-disk-in-md-raid-1/?share=pinterest&#34; title=&#34;Click to share on Pinterest&#34;&gt;&lt;span&gt;Pinterest&lt;/span&gt;&lt;/a&gt;
+            &lt;/li&gt;
+            &lt;li class=&#34;share-end&#34;&gt;
+            &lt;/li&gt;
+            &lt;li class=&#34;share-google-plus-1&#34;&gt;
+              &lt;a rel=&#34;nofollow&#34; data-shared=&#34;sharing-google-259&#34; class=&#34;share-google-plus-1 sd-button share-icon&#34; href=&#34;https://nazaretyan.com/changing-disk-in-md-raid-1/?share=google-plus-1&#34; title=&#34;Click to share on Google+&#34;&gt;&lt;span&gt;Google&lt;/span&gt;&lt;/a&gt;
+            &lt;/li&gt;
+            &lt;li class=&#34;share-print&#34;&gt;
+              &lt;a rel=&#34;nofollow&#34; data-shared=&#34;&#34; class=&#34;share-print sd-button share-icon&#34; href=&#34;https://nazaretyan.com/changing-disk-in-md-raid-1/&#34; title=&#34;Click to print&#34;&gt;&lt;span&gt;Print&lt;/span&gt;&lt;/a&gt;
+            &lt;/li&gt;
+            &lt;li class=&#34;share-end&#34;&gt;
+            &lt;/li&gt;
+            &lt;li class=&#34;share-end&#34;&gt;
+            &lt;/li&gt;
+          &lt;/ul&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;div class=&#39;sharedaddy sd-block sd-like jetpack-likes-widget-wrapper jetpack-likes-widget-unloaded&#39; id=&#39;like-post-wrapper-39401321-259-5766a03cef057&#39; data-src=&#39;//widgets.wp.com/likes/#blog_id=39401321&amp;post_id=259&amp;origin=nazaretyan.com&amp;obj_id=39401321-259-5766a03cef057&#39; data-name=&#39;like-post-frame-39401321-259-5766a03cef057&#39;&gt;
+  &lt;h3 class=&#39;sd-title&#39;&gt;
+    Like this:
+  &lt;/h3&gt;
+  
+  &lt;div class=&#39;likes-widget-placeholder post-likes-widget-placeholder&#39; style=&#39;height:55px&#39;&gt;
+    &lt;span class=&#39;button&#39;&gt;&lt;span&gt;Like&lt;/span&gt;&lt;/span&gt; &lt;span class=&#34;loading&#34;&gt;Loading...&lt;/span&gt;
+  &lt;/div&gt;
+  
+
+&lt;p&gt;&lt;span class=&#39;sd-text-color&#39;&gt;&lt;/span&gt;&lt;a class=&#39;sd-link-color&#39;&gt;&lt;/a&gt;
+&lt;/div&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>nginx &#43; php-fpm &#43; php-apc &#43; mysql &#43; wordpress perfect way to run a blog</title>
+      <link>http://hugo.nazaretyan.com/post/nginx-php-fpm-php-apc-mysql-wordpress-perfect-way-to-run-a-blog/</link>
+      <pubDate>Fri, 27 Sep 2013 00:00:00 +0000</pubDate>
+      <author>moushegh@gmail.com (Moushegh Nazaretyan)</author>
+      <guid>http://hugo.nazaretyan.com/post/nginx-php-fpm-php-apc-mysql-wordpress-perfect-way-to-run-a-blog/</guid>
+      <description>&lt;p&gt;i recently moved from apache2 to nginx on all my web servers. and feeling happy about that.&lt;/p&gt;
+
+&lt;p&gt;i would like to share configurations since , before and after the move i did load test on my blog and difference on performance was amazing.&lt;/p&gt;
+
+&lt;p&gt;lets consider that we already have a server (VM or not) with running Debian linux. and LAMP with WP on board.&lt;/p&gt;
+
+&lt;p&gt;so all we need to do its to migrate from apache2 to nginx.&lt;/p&gt;
+
+&lt;p&gt;so simple steps are starting of moving apache from port 80 to 81 , to have it somewhere , in case of emergency roll back.&lt;/p&gt;
+
+&lt;p&gt;check your http.conf and vhosts configs and do not forget about ports.conf. move everything to 81 restart apache, check if 80 port is free by netstat -nlptu |grep 80, check that apache is on 81 by netstat -nlptu |grep 81, try to open your WP with &lt;a href=&#34;http://domain:81&#34;&gt;http://domain:81&lt;/a&gt; and if everything works, we can go forward and start to configure nginx.&lt;/p&gt;
+
+&lt;p&gt;so for nginx we will need to use precompiled package from nginx.org or dotdeb or to compile it ourselves. I did compilation in my case, but here we will go with package from dotdeb (more options compiled).&lt;/p&gt;
+
+&lt;p&gt;edit your /etc/apt/source.list and add&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;deb http://www.deb-multimedia.org stable main non-free
+deb http://packages.dotdeb.org squeeze all
+deb-src http://packages.dotdeb.org squeeze all
+deb http://nginx.org/packages/debian/ squeeze nginx
+deb-src http://nginx.org/packages/debian/ squeeze nginx
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;i&amp;#8217;m using debian 6 (did not have time to upgrade to 7 :)) ) so consider of changing squeeze to wheezy in case of you&amp;#8217;re using debian 7, version can be found here cat /etc/debian_version&lt;/p&gt;
+
+&lt;p&gt;so after just usual steps of adding key from foreign repository&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;apt-get update &amp;amp;&amp;amp; apt-get install deb-multimedia-keyring
+wget http://www.dotdeb.org/dotdeb.gpg -O- |apt-key add -
+gpg --keyserver hkp://keys.gnupg.net --recv-keys ABF5BD827BD9BF62
+gpg -a --export 7BD9BF62 | apt-key add -
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;so now dotdeb is trusted and we can do apt-get update and apt-get upgrade, i&amp;#8217;m sure that some php/mysql and apache packages will get updated since debian 6 have old version.&lt;/p&gt;
+
+&lt;p&gt;so now we are ready to install php5-fpm , memcache (to keep php sessions in it), php-apc for caching, nginx itself &lt;img src=&#34;http://i1.wp.com/nazaretyan.com/wp-includes/images/smilies/icon_smile.gif?w=625&#34; alt=&#34;:)&#34; class=&#34;wp-smiley&#34; data-recalc-dims=&#34;1&#34; /&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;apt-get install php5-fpm nginx php5-apc memcached php5-memcached php5-dev 
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;so we can test our nginx installation by trying to open the &lt;a href=&#34;http://domain/&#34;&gt;http://domain/&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;if nginx default page is in place so we are on the right way.&lt;/p&gt;
+
+&lt;p&gt;first thing that we will need to fix its a bug in the file /etc/php5/fpm/php.ini ,&lt;/p&gt;
+
+&lt;p&gt;so open it with your favorite editor and fine the line cgi.fix_pathinfo and change value to 0 .&lt;/p&gt;
+
+&lt;p&gt;after this part is done, we can move on.&lt;/p&gt;
+
+&lt;p&gt;now all we need is to have nginx to work with WP (so php will work via php5-fpm).&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;server {
+listen       80;
+server_name  domane.name wwwdomainname etc;
+root /var/www/domain/;
+
+access_log  /var/log/nginx/domain.access.log ;
+
+location ~ \.php$ {
+try_files $uri =404;
+fastcgi_pass   unix:/tmp/wwwpool.sock;
+fastcgi_cache  one;
+fastcgi_cache_min_uses 3;
+fastcgi_cache_valid 200 301 302 304 5m;
+fastcgi_cache_key &amp;quot;$request_method|$host|$request_uri&amp;quot;;
+fastcgi_index  index.php;
+include fastcgi_params;
+fastcgi_param       SCRIPT_FILENAME  $document_root$fastcgi_script_name;
+fastcgi_ignore_client_abort     off;
+}
+
+location / {
+root   /var/www/domain/;
+index  index.php;
+
+try_files $uri $uri/ /index.php?$args;
+}
+
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&amp;nbsp;&lt;/p&gt;
+
+&lt;p&gt;here you will need to be careful for&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt; fastcgi_pass   unix:/tmp/wwwpool.sock 
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;since this you need to define in php5-fpm config. in /etc/php5/fpm&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>speedport  and HP8500A wifi problem</title>
+      <link>http://hugo.nazaretyan.com/post/speedport-and-hp8500a-wifi-problem/</link>
+      <pubDate>Thu, 10 May 2012 00:00:00 +0000</pubDate>
+      <author>moushegh@gmail.com (Moushegh Nazaretyan)</author>
+      <guid>http://hugo.nazaretyan.com/post/speedport-and-hp8500a-wifi-problem/</guid>
+      <description>&lt;p&gt;in case of somebody will have a issues on connecting multifunction all-in-one HP officejet 8500A to Speedport W 723V typ b, all you need to do its to downgrade the firmware from your router,&lt;/p&gt;
+
+&lt;p&gt;old firmware can be downloaded from T-com site. only one that works its 1.11.000 (actual one is 1.24.000)&lt;/p&gt;
+
+&lt;p&gt;spend today 3 hours until found solution , hope somebody who will read this would spend less  &lt;img src=&#34;http://i1.wp.com/nazaretyan.com/wp-includes/images/smilies/icon_smile.gif?w=625&#34; alt=&#34;:)&#34; class=&#34;wp-smiley&#34; data-recalc-dims=&#34;1&#34; /&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>vps as solution for VPN on public internet access points</title>
+      <link>http://hugo.nazaretyan.com/post/vps-as-solution-for-vpn-on-public-internet-access-points/</link>
+      <pubDate>Sun, 21 Nov 2010 00:00:00 +0000</pubDate>
+      <author>moushegh@gmail.com (Moushegh Nazaretyan)</author>
+      <guid>http://hugo.nazaretyan.com/post/vps-as-solution-for-vpn-on-public-internet-access-points/</guid>
+      <description>&lt;p&gt;i think most that i want to write on this post is already tolden  in head  &lt;img src=&#34;http://i1.wp.com/nazaretyan.com/wp-includes/images/smilies/icon_smile.gif?w=625&#34; alt=&#34;:)&#34; class=&#34;wp-smiley&#34; data-recalc-dims=&#34;1&#34; /&gt;but anyway&lt;/p&gt;
+
+&lt;p&gt;most people using laptops with &amp;#8220;free&amp;#8221; access points on fastfood points/ airports and other places.&lt;/p&gt;
+
+&lt;p&gt;most of this points have a limited traffic access to internet with lot of port filters.&lt;/p&gt;
+
+&lt;p&gt;but as a usual user with unsual ports  &lt;img src=&#34;http://i1.wp.com/nazaretyan.com/wp-includes/images/smilies/icon_smile.gif?w=625&#34; alt=&#34;:)&#34; class=&#34;wp-smiley&#34; data-recalc-dims=&#34;1&#34; /&gt;i want always to access everyting from everywhere with same quality as from home&lt;/p&gt;
+
+&lt;p&gt;after searching in internet for solution trying my-freedom and other servies that giving only non full speed access i become to idea that its easier to have own VPN server running somewhere in cheep or almost free  hosting.&lt;/p&gt;
+
+&lt;p&gt;what we will need&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;we will need to register account on amazon AWS, for that we need to go to &lt;a href=&#34;http://aws.amazon.com/free/ and&#34;&gt;http://aws.amazon.com/free/ and&lt;/a&gt; register there, after we will get tear of amazon vps &lt;img src=&#34;http://i1.wp.com/nazaretyan.com/wp-includes/images/smilies/icon_smile.gif?w=625&#34; alt=&#34;:)&#34; class=&#34;wp-smiley&#34; data-recalc-dims=&#34;1&#34; /&gt;&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;we need to install virtual instance, i took the &amp;#8220;US-East Micro Instance с Ubuntu 10.4&amp;#8243; with 10gb hard drive , on community AMI&amp;#8217;s you can find it with name &lt;em&gt;ami-c2a255ab.&lt;/em&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;&lt;em&gt;3.&lt;/em&gt; when server is up and running we will need putty or (in my case just a terminal as i&amp;#8217;m a mac user) for login to server.&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;we will need to have no-ip.com account as on every restart intance will get new ip address, how to configure no-ip.com for linux host you can find on this article &lt;a href=&#34;https://help.ubuntu.com/community/DynamicDNS&#34;&gt;https://help.ubuntu.com/community/DynamicDNS&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;at server we need to install OpenVPN. there is a lot of good manuals how to do it, but in sort words&lt;/p&gt;
+
+&lt;p&gt;we need to read &lt;a href=&#34;http://library.linode.com/networking/openvpn/ubuntu-10.04-lucid&#34;&gt;http://library.linode.com/networking/openvpn/ubuntu-10.04-lucid&lt;/a&gt; this very good article about OpenVPN.&lt;/p&gt;
+
+&lt;p&gt;and try to start own one , with config file&lt;/p&gt;
+
+&lt;div id=&#34;_mcePaste&#34;&gt;
+  port 443
+&lt;/div&gt;
+
+&lt;div id=&#34;_mcePaste&#34;&gt;
+  proto udp
+&lt;/div&gt;
+
+&lt;div id=&#34;_mcePaste&#34;&gt;
+  dev tap
+&lt;/div&gt;
+
+&lt;div id=&#34;_mcePaste&#34;&gt;
+  ########################
+&lt;/div&gt;
+
+&lt;div id=&#34;_mcePaste&#34;&gt;
+  ca /etc/openvpn/ca.crt
+&lt;/div&gt;
+
+&lt;div id=&#34;_mcePaste&#34;&gt;
+  cert /etc/openvpn/server.crt
+&lt;/div&gt;
+
+&lt;div id=&#34;_mcePaste&#34;&gt;
+  key /etc/openvpn/server.key
+&lt;/div&gt;
+
+&lt;div id=&#34;_mcePaste&#34;&gt;
+  dh /etc/openvpn/dh1024.pem
+&lt;/div&gt;
+
+&lt;div id=&#34;_mcePaste&#34;&gt;
+  ##################################
+&lt;/div&gt;
+
+&lt;div id=&#34;_mcePaste&#34;&gt;
+  tls-server
+&lt;/div&gt;
+
+&lt;div id=&#34;_mcePaste&#34;&gt;
+  mode server
+&lt;/div&gt;
+
+&lt;div id=&#34;_mcePaste&#34;&gt;
+  duplicate-cn
+&lt;/div&gt;
+
+&lt;div id=&#34;_mcePaste&#34;&gt;
+  tun-mtu 1500
+&lt;/div&gt;
+
+&lt;div id=&#34;_mcePaste&#34;&gt;
+  tun-mtu-extra 32
+&lt;/div&gt;
+
+&lt;div id=&#34;_mcePaste&#34;&gt;
+  mssfix 1450
+&lt;/div&gt;
+
+&lt;div id=&#34;_mcePaste&#34;&gt;
+  ##################################
+&lt;/div&gt;
+
+&lt;div id=&#34;_mcePaste&#34;&gt;
+  server 172.0.1.0 255.255.255.0
+&lt;/div&gt;
+
+&lt;div id=&#34;_mcePaste&#34;&gt;
+  ifconfig-pool-persist clients.txt
+&lt;/div&gt;
+
+&lt;div id=&#34;_mcePaste&#34;&gt;
+  push &amp;#8220;redirect-gateway&amp;#8221;
+&lt;/div&gt;
+
+&lt;div id=&#34;_mcePaste&#34;&gt;
+  push &amp;#8220;dhcp-option DNS 172.0.1.1&amp;#8243;
+&lt;/div&gt;
+
+&lt;div id=&#34;_mcePaste&#34;&gt;
+  ############################
+&lt;/div&gt;
+
+&lt;div id=&#34;_mcePaste&#34;&gt;
+  client-to-client
+&lt;/div&gt;
+
+&lt;div id=&#34;_mcePaste&#34;&gt;
+  keepalive 10 120
+&lt;/div&gt;
+
+&lt;div id=&#34;_mcePaste&#34;&gt;
+  max-clients 100
+&lt;/div&gt;
+
+&lt;div id=&#34;_mcePaste&#34;&gt;
+  ###############################
+&lt;/div&gt;
+
+&lt;div id=&#34;_mcePaste&#34;&gt;
+  user root
+&lt;/div&gt;
+
+&lt;div id=&#34;_mcePaste&#34;&gt;
+  group root
+&lt;/div&gt;
+
+&lt;div id=&#34;_mcePaste&#34;&gt;
+  ##################################
+&lt;/div&gt;
+
+&lt;div id=&#34;_mcePaste&#34;&gt;
+  persist-key
+&lt;/div&gt;
+
+&lt;div id=&#34;_mcePaste&#34;&gt;
+  persist-tun
+&lt;/div&gt;
+
+&lt;div id=&#34;_mcePaste&#34;&gt;
+  status          /var/log/openvpn/status_server.log
+&lt;/div&gt;
+
+&lt;div id=&#34;_mcePaste&#34;&gt;
+  log             /var/log/openvpn/openvpn_server.log
+&lt;/div&gt;
+
+&lt;div id=&#34;_mcePaste&#34;&gt;
+  log-append      /var/log/openvpn/append_server.log
+&lt;/div&gt;
+
+&lt;div id=&#34;_mcePaste&#34;&gt;
+  verb 3
+&lt;/div&gt;
+
+&lt;p&gt;after the server is running, we need just to download windows/mac client and configure it on your laptop.&lt;/p&gt;
+
+&lt;p&gt;as you can see from config file my openvpn server is running on 443 (HTTPS) port, which is open almost everywhere,&lt;/p&gt;
+
+&lt;p&gt;if for some meters HTTPS is closed in point from where you want to connect you can try to use 53UDP (bind) port&lt;/p&gt;
+
+&lt;p&gt;from my own experience its open almost everywhere &lt;img src=&#34;http://i1.wp.com/nazaretyan.com/wp-includes/images/smilies/icon_smile.gif?w=625&#34; alt=&#34;:)&#34; class=&#34;wp-smiley&#34; data-recalc-dims=&#34;1&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;ask questions/configure and enjoy your 15GB of free traffic from Amazon AWS. &lt;img src=&#34;http://i1.wp.com/nazaretyan.com/wp-includes/images/smilies/icon_smile.gif?w=625&#34; alt=&#34;:)&#34; class=&#34;wp-smiley&#34; data-recalc-dims=&#34;1&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;y&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>itunes error -50 on sync</title>
+      <link>http://hugo.nazaretyan.com/post/itunes-error-50-on-sync/</link>
+      <pubDate>Thu, 18 Nov 2010 00:00:00 +0000</pubDate>
+      <author>moushegh@gmail.com (Moushegh Nazaretyan)</author>
+      <guid>http://hugo.nazaretyan.com/post/itunes-error-50-on-sync/</guid>
+      <description>&lt;p&gt;heya  &lt;img src=&#34;http://i1.wp.com/nazaretyan.com/wp-includes/images/smilies/icon_smile.gif?w=625&#34; alt=&#34;:)&#34; class=&#34;wp-smiley&#34; data-recalc-dims=&#34;1&#34; /&gt;few days ago got the issue with SYNC my iPhone with itunes on windows7,&lt;/p&gt;
+
+&lt;p&gt;from 4 steps of sync its stops on 3 one and told me that there is error -50&lt;/p&gt;
+
+&lt;p&gt;after searching a lot on brave apple how to and speaking with customer care i understend that even they cant tell anything regarding this issue.&lt;/p&gt;
+
+&lt;p&gt;and i start testings.&lt;/p&gt;
+
+&lt;p&gt;main issue was on picture sync. after searching and reading blogs, i find out that iphone/ipad/ipod is not syncing your images but making some CACHE of them and syncing cached files only. and if there is a issue with broken cache file you will always get error on some stage of sync.&lt;/p&gt;
+
+&lt;p&gt;problem resolution was quite simple &amp;#8211;  just delete the &amp;#8220;iPod Photo Cache&amp;#8221; directory.&lt;/p&gt;
+
+&lt;p&gt;just need to remember to find it in directory of sync.&lt;/p&gt;
+
+&lt;p&gt;after connecting device again it will rebuild your image db, and sync will be fine.&lt;/p&gt;
+
+&lt;p&gt;&amp;#8212;&amp;#8211;&lt;/p&gt;
+
+&lt;p&gt;btw &amp;#8211; apple recomends to&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;reinstall iTunes.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;uninstall antivirus&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;uninstall all unnessary programs.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;10000 time restart machine&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>how to connect windows 2008R2 to windows 2003R2 Domain controller</title>
+      <link>http://hugo.nazaretyan.com/post/how-to-connect-windows-2008r2-to-windows-2003r2-domain-controller/</link>
+      <pubDate>Mon, 03 May 2010 00:00:00 +0000</pubDate>
+      <author>moushegh@gmail.com (Moushegh Nazaretyan)</author>
+      <guid>http://hugo.nazaretyan.com/post/how-to-connect-windows-2008r2-to-windows-2003r2-domain-controller/</guid>
+      <description>&lt;p&gt;Few days ago i get a chance to configure new windows 2008R2 on already working infrastructure with windows2003R2,&lt;/p&gt;
+
+&lt;p&gt;main goad was to create RODC (read only domain controller) within AD.&lt;/p&gt;
+
+&lt;p&gt;after starting the project i get few real interesting situations that want to share.&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;we need windows 2003R2 with domain controller role on it.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;we need to install windows 2008R2 on separate machine.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;after we need to connect windows 2008R2 to our infrastracture as usual host. login on it with domain administrator account and install DNS role.&lt;/p&gt;
+
+&lt;p&gt;after DNS is installed we need to run DCPROMO (it will install all nessary roles for domain conntroler). seems everything easy but after few next&amp;#8217;s win2008 will tell you that you need to prepair windows2003 for migration&lt;/p&gt;
+
+&lt;p&gt;what we need to do in this case.&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;we need to put win2008 disk to win2003 machine. and copy directory (in support) adprep to C:\ ,&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;after we need to go to C:\adprep (in CMD) and run one for the file ( for your machine ARCH) for me it was 64 bit version&lt;/p&gt;
+
+&lt;p&gt;command is&lt;/p&gt;
+
+&lt;p&gt;adprep.exe /forestPrep&lt;/p&gt;
+
+&lt;p&gt;it will tell you that its going to update schema  of  2003 to newer version&lt;/p&gt;
+
+&lt;p&gt;NOW TIP , you need to PUSH &amp;#8220;C&amp;#8221; and only after ENTER button, in other case it will give you&lt;/p&gt;
+
+&lt;p&gt;0x4 error :))&lt;/p&gt;
+
+&lt;p&gt;after pushing C and ENTER it will work on your domain like 3-4 minutes. and  will report you that domain is ready for migration&lt;/p&gt;
+
+&lt;p&gt;but you need to run here one more command&lt;/p&gt;
+
+&lt;p&gt;adprep /domainPrep,&lt;/p&gt;
+
+&lt;p&gt;if it will work fine means that your DC working on NATIVE mode if not you need to go to Acitve directory and user settings and RISE your domain till 2003 version.&lt;/p&gt;
+
+&lt;p&gt;after RISING domain version you need to run one more time /domainPrep command. and it will finish without problems.&lt;/p&gt;
+
+&lt;p&gt;now we need to rin adprep /rodcprep it will make RODC.&lt;/p&gt;
+
+&lt;p&gt;after all this steps done, you can return to windows2008 and finish DCPROMO steps.&lt;/p&gt;
+
+&lt;p&gt;one restart and your windows 2008R2 is in working infrastructure of windows 2003r2 as secondary domain controller.&lt;/p&gt;
+
+&lt;p&gt;one more tip &amp;#8211; if errors will continue apper &amp;#8211; try adprep /&lt;em&gt;noFileCopy&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;and add your user to shchema-administrators group.&lt;/em&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>How to shutdown how if init6, reboot or other shutdown method do not work because of hdd, or other system problems</title>
+      <link>http://hugo.nazaretyan.com/post/how-to-shutdown-how-if-init6-reboot-or-other-shutdown-method-do-not-work-because-of-hdd-or-other-system-problems/</link>
+      <pubDate>Fri, 09 Apr 2010 00:00:00 +0000</pubDate>
+      <author>moushegh@gmail.com (Moushegh Nazaretyan)</author>
+      <guid>http://hugo.nazaretyan.com/post/how-to-shutdown-how-if-init6-reboot-or-other-shutdown-method-do-not-work-because-of-hdd-or-other-system-problems/</guid>
+      <description>&lt;p&gt;If you have ever had a hard drive fail on a remote server you may remember the feeling you had after trying to issue the following commands:&lt;/p&gt;
+
+&lt;p&gt;# reboot&lt;/p&gt;
+
+&lt;p&gt;bash: /sbin/reboot: Input/output error&lt;/p&gt;
+
+&lt;p&gt;# shutdown -r now&lt;/p&gt;
+
+&lt;p&gt;bash: /sbin/shutdown: Input/output error&lt;/p&gt;
+
+&lt;p&gt;Obviously, there is a problem with your drive. These commands are failing because the kernel is unable to load the /sbin/reboot and /sbin/shutdown binaries from the disk so that it can execute them.&lt;/p&gt;
+
+&lt;p&gt;A fsck on the next boot might be able to correct whatever is wrong with the disk, but first you need to get the system to reboot. If your machine is located at a managed hosting provider then you could submit a reboot ticket, but you&amp;#8217;ll have to wait for someone to take responsibility.&lt;/p&gt;
+
+&lt;p&gt;Wouldn&amp;#8217;t it be nice if there was a way to ask the kernel to reboot without needing to access the failing drive? Well, there is a way, and it is remarkably simple.&lt;/p&gt;
+
+&lt;p&gt;The “magic SysRq key” provides a way to send commands directly to the kernel through the /proc filesystem. It is enabled via a kernel compile time option, CONFIG_MAGIC_SYSRQ, which seems to be standard on most distributions. First you must activate the magic SysRq option:&lt;/p&gt;
+
+&lt;p&gt;echo 1 &amp;gt; /proc/sys/kernel/sysrq&lt;/p&gt;
+
+&lt;p&gt;When you are ready to reboot the machine simply run the following:&lt;/p&gt;
+
+&lt;p&gt;echo b &amp;gt; /proc/sysrq-trigger&lt;/p&gt;
+
+&lt;p&gt;This does not attempt to unmount or sync filesystems, so it should only be used when absolutely necessary, but if your drive is already failing then that may not be a concern.&lt;/p&gt;
+
+&lt;p&gt;In addition to rebooting the system the sysrq trick can be used to dump memory information to the console, sync all filesystems, remount all filesystems in read-only mode, send SIGTERM or SIGKILL to all processes except init, or power off the machine entirely, among other things.&lt;/p&gt;
+
+&lt;p&gt;Also, instead of echoing into /proc/sys/kernel/sysrq each time you can activate the magic SysRq key at system boot time using sysctl, where supported:&lt;/p&gt;
+
+&lt;p&gt;echo &amp;#8220;kernel.sysrq = 1&amp;#8243; &amp;gt;&amp;gt; /etc/sysctl.conf&lt;/p&gt;
+
+&lt;p&gt;If you would like to learn more about magic SysRq you can read the sysrq.txt file in the kernel documentation.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>how to change hostname in linux without restart</title>
+      <link>http://hugo.nazaretyan.com/post/how-to-change-hostname-in-linux-without-restart/</link>
+      <pubDate>Fri, 09 Apr 2010 00:00:00 +0000</pubDate>
+      <author>moushegh@gmail.com (Moushegh Nazaretyan)</author>
+      <guid>http://hugo.nazaretyan.com/post/how-to-change-hostname-in-linux-without-restart/</guid>
+      <description>&lt;p&gt;its quite simple ..&lt;/p&gt;
+
+&lt;p&gt;you need just to echo new hostname into /proc/sys/kernel/hostname&lt;/p&gt;
+
+&lt;p&gt;for exmaple &amp;#8211;&lt;/p&gt;
+
+&lt;p&gt;echo $NEWHOSTNAME &amp;gt; /proc/sys/kernel/hostname&lt;/p&gt;
+
+&lt;p&gt;logoff and login again to host &lt;img src=&#34;http://i1.wp.com/nazaretyan.com/wp-includes/images/smilies/icon_smile.gif?w=625&#34; alt=&#34;:)&#34; class=&#34;wp-smiley&#34; data-recalc-dims=&#34;1&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;but remeber to add the new hostname to /etc/hosts as well&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>DD-WRT on WRT54GL</title>
+      <link>http://hugo.nazaretyan.com/posts/dd-wrt-on-wrt54gl/</link>
+      <pubDate>Wed, 31 Mar 2010 00:00:00 +0000</pubDate>
+      <author>moushegh@gmail.com (Moushegh Nazaretyan)</author>
+      <guid>http://hugo.nazaretyan.com/posts/dd-wrt-on-wrt54gl/</guid>
+      <description>&lt;p&gt;tried to install last firmware 24sp2 from 10/10/09 on my Linksys WRT54GL,&lt;/p&gt;
+
+&lt;p&gt;from start everything looks cool, system get update in 120 second after restart all old config was on place and put back the device to network,&lt;/p&gt;
+
+&lt;p&gt;from few hours i find out that my cisco 2660 is losing the packages in the network and Sonicwall gateway reporting spoofing attacks.&lt;/p&gt;
+
+&lt;p&gt;i done like everything that i can, change the switch , sonicwall port, disconnect all employers, but nothing helps. but after removing Linksys everything becomes fine,&lt;/p&gt;
+
+&lt;p&gt;i change back firmware to 23sp2. for now everything looks cool.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>GVC uninstall</title>
+      <link>http://hugo.nazaretyan.com/post/gvc-uninstall/</link>
+      <pubDate>Fri, 26 Feb 2010 00:00:00 +0000</pubDate>
+      <author>moushegh@gmail.com (Moushegh Nazaretyan)</author>
+      <guid>http://hugo.nazaretyan.com/post/gvc-uninstall/</guid>
+      <description>&lt;p&gt;sometimes when youre trying to uninstall sonicwall global VPN client youre getting error that is not installed on the machine, but after that when youre trying to install the new one its gives error that old version is intalled,&lt;/p&gt;
+
+&lt;p&gt;here is easy way to remove it.&lt;/p&gt;
+
+&lt;p&gt;&lt;span style=&#34;color: #ffffff;&#34;&gt;In a DOS command window type the following: &lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;span style=&#34;color: black;&#34;&gt;&lt;span style=&#34;color: #ffffff;&#34;&gt;C:&amp;gt; &lt;/span&gt;&lt;strong&gt;&lt;span style=&#34;color: #ffffff;&#34;&gt;net stop rcfox&lt;/span&gt;&lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;span style=&#34;color: black;&#34;&gt;&lt;span style=&#34;color: #ffffff;&#34;&gt;Then go into the Windows\System32\drivers directory and rename &lt;/span&gt;&lt;strong&gt;&lt;span style=&#34;color: #ffffff;&#34;&gt;rcfox.sys&lt;/span&gt;&lt;/strong&gt;&lt;span style=&#34;color: #ffffff;&#34;&gt; to &lt;/span&gt;&lt;strong&gt;&lt;span style=&#34;color: #ffffff;&#34;&gt;rcfox.sys.old&lt;/span&gt;&lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;span style=&#34;color: black;&#34;&gt;&lt;span style=&#34;color: #ffffff;&#34;&gt;Run the installer&lt;/span&gt;&lt;br /&gt; &lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;span style=&#34;color: #ffffff;&#34;&gt;hope it helps.&lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;y&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>how to reset password on Linksys WRT54GL running OpenWRT</title>
+      <link>http://hugo.nazaretyan.com/post/how-to-reset-password-on-linksys-wrt54gl-runing-openwrt/</link>
+      <pubDate>Fri, 26 Feb 2010 00:00:00 +0000</pubDate>
+      <author>moushegh@gmail.com (Moushegh Nazaretyan)</author>
+      <guid>http://hugo.nazaretyan.com/post/how-to-reset-password-on-linksys-wrt54gl-runing-openwrt/</guid>
+      <description>&lt;p&gt;post is mainly for people who just find out that cant remember the root password from OpenWRT operation system thats running on their Linksys WRT54GL.&lt;/p&gt;
+
+&lt;p&gt;what you need to do  &lt;img src=&#34;http://i1.wp.com/nazaretyan.com/wp-includes/images/smilies/icon_smile.gif?w=625&#34; alt=&#34;:)&#34; class=&#34;wp-smiley&#34; data-recalc-dims=&#34;1&#34; /&gt;?&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;configure your static IP address on your ehternet to 192.168.1.3 netmask 255.255.255.0 , we dont need a gateway and dns servers,&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;connect Linksys LAN port N1 to your machine,&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;restart Linksys, and wait till DMZ light will become green. after it push the EasyConnect button (or reset button it doesn&amp;#8217;t meter)&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;now your Linksys openWRT is runing in file_safe mode, you can telnet to it via 192.168.1.1 ( for telnet i&amp;#8217;m recomending to use PuTTY (just google for it))&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;when youre inside , type mount_root, system will remount JFFS from RO to RW.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt; now you can east type PASSWD and change root password.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;hope this post helps you &lt;img src=&#34;http://i1.wp.com/nazaretyan.com/wp-includes/images/smilies/icon_smile.gif?w=625&#34; alt=&#34;:)&#34; class=&#34;wp-smiley&#34; data-recalc-dims=&#34;1&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;i made same for one of my routers .. works perfect.&lt;/p&gt;
+
+&lt;p&gt;regards&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>configuring tunneling for ipv6</title>
+      <link>http://hugo.nazaretyan.com/post/configuring-tunneling-for-ipv6/</link>
+      <pubDate>Tue, 26 Jan 2010 00:00:00 +0000</pubDate>
+      <author>moushegh@gmail.com (Moushegh Nazaretyan)</author>
+      <guid>http://hugo.nazaretyan.com/post/configuring-tunneling-for-ipv6/</guid>
+      <description>&lt;p&gt;hey &lt;img src=&#34;http://i1.wp.com/nazaretyan.com/wp-includes/images/smilies/icon_smile.gif?w=625&#34; alt=&#34;:)&#34; class=&#34;wp-smiley&#34; data-recalc-dims=&#34;1&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;again thanks for he.net for this wonderful appartunity to use IPv6 without own zone &amp;#8230; blablabla &lt;img src=&#34;http://i1.wp.com/nazaretyan.com/wp-includes/images/smilies/icon_smile.gif?w=625&#34; alt=&#34;:)&#34; class=&#34;wp-smiley&#34; data-recalc-dims=&#34;1&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;and here is some examples how to configure IPv6 tunnel.&lt;/p&gt;
+
+&lt;p&gt;lats start.&lt;/p&gt;
+
+&lt;p&gt;1.&lt;/p&gt;
+
+&lt;p&gt;&lt;span style=&#34;color: #ff0000;&#34;&gt;Linux with iproute &lt;/span&gt;&lt;/p&gt;
+
+&lt;pre&gt;modprobe ipv6
+ip tunnel add new-ipv6 mode sit remote IP_ADDRESS local IP_ADDRESS ttl 255
+ip link set new-ipv6 up
+ip addr add IPv6_ADDRESS dev new-ipv6
+ip route add ::/0 dev new-ipv6
+ip -f inet6 addr
+
+2.linux with net-tools
+
+
+
+&lt;pre&gt;ifconfig sit0 up
+ifconfig sit0 inet6 tunnel ::IPv4_LIKE_IPv6_ADDRESS
+ifconfig sit1 up
+ifconfig sit1 inet6 add IPv6_ADDRESS
+route -A inet6 add ::/0 dev sit1&lt;/pre&gt;
+
+&lt;p&gt;
+  3.Sun Solaris
+&lt;/p&gt;
+
+&lt;pre&gt;ifconfig ip.tun0 inet6 plumb
+ifconfig ip.tun0 inet6 tsrc IP_LOCAL tdst IP_REMOTE up
+ifconfig ip.tun0 inet6 addif TUN_IPv6_ADDRESS_LOCAL TUN_IPv6_ADDRESS_REMOTE up
+route add -inet6 default REMOTE_TUN_IPv6_ADDRESS&lt;/pre&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>bind9 ipv6</title>
+      <link>http://hugo.nazaretyan.com/post/bind9-ipv6/</link>
+      <pubDate>Mon, 25 Jan 2010 00:00:00 +0000</pubDate>
+      <author>moushegh@gmail.com (Moushegh Nazaretyan)</author>
+      <guid>http://hugo.nazaretyan.com/post/bind9-ipv6/</guid>
+      <description>&lt;p&gt;&lt;span style=&#34;color: #ffffff;&#34;&gt;as you can see in previous post on blog i passed IPv6 certification.&lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;span style=&#34;color: #ffffff;&#34;&gt;Most hard part for me was configuring rDNS server &lt;img src=&#34;http://i1.wp.com/nazaretyan.com/wp-includes/images/smilies/icon_smile.gif?w=625&#34; alt=&#34;:)&#34; class=&#34;wp-smiley&#34; data-recalc-dims=&#34;1&#34; /&gt;&lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;span style=&#34;color: #ffffff;&#34;&gt;why ?&lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;span style=&#34;color: #ffffff;&#34;&gt;because it was really hard to undersend the zone record file :). after 20 minuts testing and making reload of my rndc file, i finly made it work. &lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;span style=&#34;color: #ffffff;&#34;&gt;here is rndc file for my Zone record as example. &lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;span style=&#34;color: #ffffff;&#34;&gt;you need to to copy it to your server and change IP&amp;#8217;s to your own &amp;#8230;&lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;span style=&#34;color: #ffffff;&#34;&gt;in named.conf (usual place /etc/bind/named.conf or /usr/local/chroot/etc/bind/named.conf)&lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;span style=&#34;color: #ffffff;&#34;&gt;you need to enter &lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;span style=&#34;color: #ffffff;&#34;&gt;&lt;em&gt;zone &amp;#8220;9.0.c.0.b.0.f.1.0.7.4.0.1.0.0.2.ip6.arpa&amp;#8221; {&lt;br /&gt; type master;&lt;br /&gt; file &amp;#8220;/etc/bind/la2newera.com.revers&amp;#8221;;&lt;br /&gt; };&lt;/em&gt;&lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;span style=&#34;color: #ffffff;&#34;&gt;where la2newera.com.revers is the file name (can be something diff. for your zone)&lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;span style=&#34;color: #ffffff;&#34;&gt;content of file is : &lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;span style=&#34;color: #ffffff;&#34;&gt;&lt;em&gt;$TTL 3d&lt;br /&gt; @       IN SOA 9.0.c.0.b.0.f.1.0.7.4.0.1.0.0.2.ip6.arpa. root.la2newera.com. (&lt;br /&gt; 201001241       ; Serial number (YYYYMMdd)&lt;br /&gt; 24h             ; Refresh time&lt;br /&gt; 30m             ; Retry time&lt;br /&gt; 2d              ; Expire time&lt;br /&gt; 3d              ; Default TTL (bind 8 ignores this, bind 9 needs it)&lt;br /&gt; )&lt;/em&gt;&lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;_IN     NS     ipv6.ns.la2newera.com.&lt;/p&gt;
+
+&lt;p&gt;IN     MX  1  ipv6.nosferatu.la2newera.com.&lt;/p&gt;
+
+&lt;p&gt;; Subnet #1&lt;/p&gt;
+
+&lt;p&gt;$ORIGIN 9.0.c.0.b.0.f.1.0.7.4.0.1.0.0.2.ip6.arpa.&lt;/p&gt;
+
+&lt;p&gt;3.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0         IN      PTR     ipv6.nosferatu.la2newera.com.&lt;/p&gt;
+
+&lt;p&gt;1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0         IN      PTR     ipv6.la2newera.com.&lt;/p&gt;
+
+&lt;p&gt;_&lt;/p&gt;
+
+&lt;p&gt;&lt;span style=&#34;color: #ffffff;&#34;&gt;&lt;br /&gt; &lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;span style=&#34;color: #ffffff;&#34;&gt;zone file is example for my zone : 2001:470:1f0b:c09::/64&lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;span style=&#34;color: #ffffff;&#34;&gt;make it runing !! lats move to IPv6 ASAP !!!!!!&lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;span style=&#34;color: #ffffff;&#34;&gt;&lt;br /&gt; &lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;span style=&#34;color: #ffffff;&#34;&gt;Moushegh&lt;br /&gt; &lt;/span&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>
