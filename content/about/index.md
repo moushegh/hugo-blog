@@ -30,7 +30,7 @@ By time, wor kstyle and toolset have been changing a lot.
     - etc ...
 
 
-### having a look but never carred procudciton
+### having a look but never carred production
     - openstack
     - kubernetes 
     - always something new from github :)
