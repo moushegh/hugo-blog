@@ -22,5 +22,5 @@ build:
 
   steps:
     - arjen/hugo-build@1.10.1
-      flags: --buildDrafts=true
+        flags: --buildDrafts=true
       
