@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Domain Controller on naut&#39;s blog</title>
-    <link>http://hugo.nazaretyan.com/tags/domain-controller/</link>
+    <link>https://www.nazaretyan.com/tags/domain-controller/</link>
     <description>Recent content in Domain Controller on naut&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <managingEditor>moushegh@gmail.com (Moushegh Nazaretyan)</managingEditor>
     <webMaster>moushegh@gmail.com (Moushegh Nazaretyan)</webMaster>
     <lastBuildDate>Mon, 03 May 2010 00:00:00 +0000</lastBuildDate>
-    <atom:link href="http://hugo.nazaretyan.com/tags/domain-controller/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://www.nazaretyan.com/tags/domain-controller/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>how to connect windows 2008R2 to windows 2003R2 Domain controller</title>
-      <link>http://hugo.nazaretyan.com/post/how-to-connect-windows-2008r2-to-windows-2003r2-domain-controller/</link>
+      <link>https://www.nazaretyan.com/post/how-to-connect-windows-2008r2-to-windows-2003r2-domain-controller/</link>
       <pubDate>Mon, 03 May 2010 00:00:00 +0000</pubDate>
       <author>moushegh@gmail.com (Moushegh Nazaretyan)</author>
-      <guid>http://hugo.nazaretyan.com/post/how-to-connect-windows-2008r2-to-windows-2003r2-domain-controller/</guid>
+      <guid>https://www.nazaretyan.com/post/how-to-connect-windows-2008r2-to-windows-2003r2-domain-controller/</guid>
       <description>&lt;p&gt;Few days ago i get a chance to configure new windows 2008R2 on already working infrastructure with windows2003R2,&lt;/p&gt;
 
 &lt;p&gt;main goad was to create RODC (read only domain controller) within AD.&lt;/p&gt;

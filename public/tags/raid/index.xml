@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Raid on naut&#39;s blog</title>
-    <link>http://hugo.nazaretyan.com/tags/raid/</link>
+    <link>https://www.nazaretyan.com/tags/raid/</link>
     <description>Recent content in Raid on naut&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <managingEditor>moushegh@gmail.com (Moushegh Nazaretyan)</managingEditor>
     <webMaster>moushegh@gmail.com (Moushegh Nazaretyan)</webMaster>
     <lastBuildDate>Mon, 02 Jun 2014 00:00:00 +0000</lastBuildDate>
-    <atom:link href="http://hugo.nazaretyan.com/tags/raid/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://www.nazaretyan.com/tags/raid/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>changing disk in MD RAID 1</title>
-      <link>http://hugo.nazaretyan.com/post/changing-disk-in-md-raid-1/</link>
+      <link>https://www.nazaretyan.com/post/changing-disk-in-md-raid-1/</link>
       <pubDate>Mon, 02 Jun 2014 00:00:00 +0000</pubDate>
       <author>moushegh@gmail.com (Moushegh Nazaretyan)</author>
-      <guid>http://hugo.nazaretyan.com/post/changing-disk-in-md-raid-1/</guid>
+      <guid>https://www.nazaretyan.com/post/changing-disk-in-md-raid-1/</guid>
       <description>
 
 &lt;p&gt;Short Article about how to change disk on software raid, hot and cold swap.&lt;/p&gt;

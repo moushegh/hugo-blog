@@ -1,4 +1,4 @@
-BaseURL = "http://hugo.nazaretyan.com/"
+BaseURL = "https://www.nazaretyan.com/"
 relativeURLs = false
 languageCode = "en-us"
 title = "naut's blog"

@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>It Support on naut&#39;s blog</title>
-    <link>http://hugo.nazaretyan.com/tags/it-support/</link>
+    <link>https://www.nazaretyan.com/tags/it-support/</link>
     <description>Recent content in It Support on naut&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <managingEditor>moushegh@gmail.com (Moushegh Nazaretyan)</managingEditor>
     <webMaster>moushegh@gmail.com (Moushegh Nazaretyan)</webMaster>
     <lastBuildDate>Fri, 09 Apr 2010 00:00:00 +0000</lastBuildDate>
-    <atom:link href="http://hugo.nazaretyan.com/tags/it-support/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://www.nazaretyan.com/tags/it-support/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>How to shutdown how if init6, reboot or other shutdown method do not work because of hdd, or other system problems</title>
-      <link>http://hugo.nazaretyan.com/post/how-to-shutdown-how-if-init6-reboot-or-other-shutdown-method-do-not-work-because-of-hdd-or-other-system-problems/</link>
+      <link>https://www.nazaretyan.com/post/how-to-shutdown-how-if-init6-reboot-or-other-shutdown-method-do-not-work-because-of-hdd-or-other-system-problems/</link>
       <pubDate>Fri, 09 Apr 2010 00:00:00 +0000</pubDate>
       <author>moushegh@gmail.com (Moushegh Nazaretyan)</author>
-      <guid>http://hugo.nazaretyan.com/post/how-to-shutdown-how-if-init6-reboot-or-other-shutdown-method-do-not-work-because-of-hdd-or-other-system-problems/</guid>
+      <guid>https://www.nazaretyan.com/post/how-to-shutdown-how-if-init6-reboot-or-other-shutdown-method-do-not-work-because-of-hdd-or-other-system-problems/</guid>
       <description>&lt;p&gt;If you have ever had a hard drive fail on a remote server you may remember the feeling you had after trying to issue the following commands:&lt;/p&gt;
 
 &lt;p&gt;# reboot&lt;/p&gt;

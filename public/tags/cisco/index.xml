@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Cisco on naut&#39;s blog</title>
-    <link>http://hugo.nazaretyan.com/tags/cisco/</link>
+    <link>https://www.nazaretyan.com/tags/cisco/</link>
     <description>Recent content in Cisco on naut&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <managingEditor>moushegh@gmail.com (Moushegh Nazaretyan)</managingEditor>
     <webMaster>moushegh@gmail.com (Moushegh Nazaretyan)</webMaster>
     <lastBuildDate>Wed, 31 Mar 2010 00:00:00 +0000</lastBuildDate>
-    <atom:link href="http://hugo.nazaretyan.com/tags/cisco/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://www.nazaretyan.com/tags/cisco/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>DD-WRT on WRT54GL</title>
-      <link>http://hugo.nazaretyan.com/posts/dd-wrt-on-wrt54gl/</link>
+      <link>https://www.nazaretyan.com/posts/dd-wrt-on-wrt54gl/</link>
       <pubDate>Wed, 31 Mar 2010 00:00:00 +0000</pubDate>
       <author>moushegh@gmail.com (Moushegh Nazaretyan)</author>
-      <guid>http://hugo.nazaretyan.com/posts/dd-wrt-on-wrt54gl/</guid>
+      <guid>https://www.nazaretyan.com/posts/dd-wrt-on-wrt54gl/</guid>
       <description>&lt;p&gt;tried to install last firmware 24sp2 from 10/10/09 on my Linksys WRT54GL,&lt;/p&gt;
 
 &lt;p&gt;from start everything looks cool, system get update in 120 second after restart all old config was on place and put back the device to network,&lt;/p&gt;

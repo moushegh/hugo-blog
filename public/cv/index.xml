@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Cvs on naut&#39;s blog</title>
-    <link>http://hugo.nazaretyan.com/cv/</link>
+    <link>https://www.nazaretyan.com/cv/</link>
     <description>Recent content in Cvs on naut&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <managingEditor>moushegh@gmail.com (Moushegh Nazaretyan)</managingEditor>
     <webMaster>moushegh@gmail.com (Moushegh Nazaretyan)</webMaster>
     <lastBuildDate>Sun, 19 Jun 2016 11:08:40 -0400</lastBuildDate>
-    <atom:link href="http://hugo.nazaretyan.com/cv/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://www.nazaretyan.com/cv/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>Moushegh Nazaretyan</title>
-      <link>http://hugo.nazaretyan.com/cv/</link>
+      <link>https://www.nazaretyan.com/cv/</link>
       <pubDate>Sun, 19 Jun 2016 11:08:40 -0400</pubDate>
       <author>moushegh@gmail.com (Moushegh Nazaretyan)</author>
-      <guid>http://hugo.nazaretyan.com/cv/</guid>
+      <guid>https://www.nazaretyan.com/cv/</guid>
       <description>&lt;p&gt;My CV&lt;/p&gt;
 </description>
     </item>

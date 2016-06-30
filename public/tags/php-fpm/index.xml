@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Php Fpm on naut&#39;s blog</title>
-    <link>http://hugo.nazaretyan.com/tags/php-fpm/</link>
+    <link>https://www.nazaretyan.com/tags/php-fpm/</link>
     <description>Recent content in Php Fpm on naut&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <managingEditor>moushegh@gmail.com (Moushegh Nazaretyan)</managingEditor>
     <webMaster>moushegh@gmail.com (Moushegh Nazaretyan)</webMaster>
     <lastBuildDate>Fri, 27 Sep 2013 00:00:00 +0000</lastBuildDate>
-    <atom:link href="http://hugo.nazaretyan.com/tags/php-fpm/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://www.nazaretyan.com/tags/php-fpm/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>nginx &#43; php-fpm &#43; php-apc &#43; mysql &#43; wordpress perfect way to run a blog</title>
-      <link>http://hugo.nazaretyan.com/post/nginx-php-fpm-php-apc-mysql-wordpress-perfect-way-to-run-a-blog/</link>
+      <link>https://www.nazaretyan.com/post/nginx-php-fpm-php-apc-mysql-wordpress-perfect-way-to-run-a-blog/</link>
       <pubDate>Fri, 27 Sep 2013 00:00:00 +0000</pubDate>
       <author>moushegh@gmail.com (Moushegh Nazaretyan)</author>
-      <guid>http://hugo.nazaretyan.com/post/nginx-php-fpm-php-apc-mysql-wordpress-perfect-way-to-run-a-blog/</guid>
+      <guid>https://www.nazaretyan.com/post/nginx-php-fpm-php-apc-mysql-wordpress-perfect-way-to-run-a-blog/</guid>
       <description>&lt;p&gt;i recently moved from apache2 to nginx on all my web servers. and feeling happy about that.&lt;/p&gt;
 
 &lt;p&gt;i would like to share configurations since , before and after the move i did load test on my blog and difference on performance was amazing.&lt;/p&gt;
