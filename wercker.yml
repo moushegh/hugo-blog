@@ -22,9 +22,5 @@ build:
 
   steps:
     - arjen/hugo-build@1.10.1
-
-  steps:
-    - script:
-        name: echo
-        code: |
-          echo "hello world!"
+      flags: --buildDrafts=true
+      
